@@ -3,7 +3,8 @@
 # To use it, first `pip install boto`,
 # set EC2_REGION, AWS_ACCESS_KEY and AWS_SECRET_KEY env variables
 # and then run it as:
-# `ansible-playbook -i ansible/inventory.ini ansible/playbook.yml --extra-vars "keypair_name=marvin_rsa security_group=Relax"`
+# `ansible-playbook -i inventory.ini playbook.yml \
+# --extra-vars "keypair_name=marvin_rsa security_group=Relax"`
 
 - hosts: localhost
   connection: local
@@ -32,11 +33,22 @@
         port=22
       with_items: ec2_info.instances
 
+    - name: cache the ec2 node host key
+      local_action: shell ssh-keyscan -H -t ecdsa,rsa,dsa {{ item.public_dns_name }} >> ~/.ssh/known_hosts
+      with_items: ec2_info.instances
+
 - hosts: hub_ec2_hosts
   gather_facts: True
   remote_user: ubuntu
+  vars:
+    tmp_dir: "/tmp/smarthome-hub-sync-deploy/"
   tasks:
-    - synchronize: src=../ dest=/home/ubuntu/smarthome-hub-sync/
+    - name: checkout the hub repo
+      local_action: git dest={{ tmp_dir }}
+          repo=git@github.com:smart-home/smarthome-hub-sync.git
+
+    - name: upload the hub code to the node
+      synchronize: src={{ tmp_dir }} dest=/home/ubuntu/smarthome-hub-sync/
 
     # TODO: make this a decent playbook
     - command: /home/ubuntu/smarthome-hub-sync/smarthome-hub-setup.sh
