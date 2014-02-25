@@ -1,0 +1,42 @@
+# Playbook to provision a micro EC2 instance and deploy the hub on it
+
+# To use it, first `pip install boto`,
+# set EC2_REGION, AWS_ACCESS_KEY and AWS_SECRET_KEY env variables
+# and then run it as:
+# `ansible-playbook -i ansible/inventory.ini ansible/playbook.yml --extra-vars "keypair_name=marvin_rsa security_group=Relax"`
+
+- hosts: localhost
+  connection: local
+  gather_facts: False
+  vars:
+    instance_type: "t1.micro"
+    image: "ami-a73264ce" # ubuntu-precise-12.04-amd64-server-20131003
+    region: "us-east-1"
+  tasks:
+    - name: make one instance
+      ec2: image={{ image }}
+           instance_type={{ instance_type }}
+           region={{ region }}
+           key_name={{ keypair_name }}
+           group={{ security_group }}
+           wait=true
+      register: ec2_info
+
+    - add_host: hostname={{ item.public_ip }} groupname=hub_ec2_hosts
+      with_items: ec2_info.instances
+
+    - name: wait for instances to listen on port:22
+      wait_for:
+        state=started
+        host={{ item.public_dns_name }}
+        port=22
+      with_items: ec2_info.instances
+
+- hosts: hub_ec2_hosts
+  gather_facts: True
+  remote_user: ubuntu
+  tasks:
+    - synchronize: src=../ dest=/home/ubuntu/smarthome-hub-sync/
+
+    # TODO: make this a decent playbook
+    - command: /home/ubuntu/smarthome-hub-sync/smarthome-hub-setup.sh
