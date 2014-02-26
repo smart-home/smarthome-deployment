@@ -73,11 +73,6 @@
     - name: install requirements.txt
       pip: requirements={{ app }}/requirements.txt virtualenv={{ home }}/ENV/
 
-    - name: mkdir logs
-      file: dest={{ app }}/logs state=directory
-    - name: mkdir var
-      file: dest={{ app }}/var state=directory
-
     - name: get jq
       get_url: url=https://github.com/stedolan/jq/raw/gh-pages/download/linux64/jq
           dest={{ home }}/jq mode=0755
@@ -86,6 +81,14 @@
       register: jq
     - name: cache the remote host key
       shell: ssh-keyscan -t ecdsa,rsa,dsa {{ jq.stdout }} >> ~/.ssh/known_hosts
+
+    - name: extract the folders that have to be created
+      command: "{{ home }}/jq --raw-output '[.logs_path+(.logging_modules|.[]), .logs_path, .data_path]|.[]' {{ app }}/config.json"
+      register: jq
+    - debug: var=jq.stdout_lines
+    - name: mkdir
+      file: path={{ item }} state=directory
+      with_items: jq.stdout_lines
 
     - name: create cron entry
       cron: name="run smarthome-hub"
