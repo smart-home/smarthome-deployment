@@ -11,7 +11,7 @@
   gather_facts: False
   vars:
     instance_type: "t1.micro"
-    image: "ami-a73264ce" # ubuntu-precise-12.04-amd64-server-20131003
+    image: "ami-d3675dba" # Debian Wheezy 7.4 PVM x86_64
     region: "us-east-1"
   tasks:
     - name: make one instance
@@ -23,7 +23,7 @@
            wait=true
       register: ec2_info
 
-    - add_host: hostname={{ item.public_ip }} groupname=hub_ec2_hosts
+    - add_host: hostname={{ item.public_dns_name }} groupname=hub_ec2_hosts
       with_items: ec2_info.instances
 
     - name: wait for instances to listen on port:22
@@ -34,21 +34,25 @@
       with_items: ec2_info.instances
 
     - name: cache the ec2 node host key
-      local_action: shell ssh-keyscan -H -t ecdsa,rsa,dsa {{ item.public_dns_name }} >> ~/.ssh/known_hosts
+      local_action: shell ssh-keyscan -H {{ item.public_dns_name }} >> ~/.ssh/known_hosts
       with_items: ec2_info.instances
 
 - hosts: hub_ec2_hosts
   gather_facts: True
-  remote_user: ubuntu
+  remote_user: admin
   vars:
     tmp_dir: "/tmp/smarthome-hub-sync-deploy/"
   tasks:
+    - name: install rsync on the remote machin
+      apt: pkg=rsync update_cache=yes
+      sudo: yes
+
     - name: checkout the hub repo
       local_action: git dest={{ tmp_dir }}
           repo=git@github.com:smart-home/smarthome-hub-sync.git
 
     - name: upload the hub code to the node
-      synchronize: src={{ tmp_dir }} dest=/home/ubuntu/smarthome-hub-sync/
+      synchronize: src={{ tmp_dir }} dest=/home/admin/smarthome-hub-sync/
 
     # TODO: make this a decent playbook
-    - command: /home/ubuntu/smarthome-hub-sync/smarthome-hub-setup.sh
+    - command: /home/admin/smarthome-hub-sync/smarthome-hub-setup.sh
