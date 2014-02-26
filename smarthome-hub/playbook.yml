@@ -6,6 +6,9 @@
 # `ansible-playbook -i inventory.ini playbook.yml \
 # --extra-vars "keypair_name=marvin_rsa security_group=Relax"`
 
+# TODO: move the deploy to a role
+# TODO: tag the EC2 instances and manage inventory
+
 - hosts: localhost
   connection: local
   gather_facts: False
@@ -41,18 +44,49 @@
   gather_facts: True
   remote_user: admin
   vars:
-    tmp_dir: "/tmp/smarthome-hub-sync-deploy/"
+    tmp_dir: "/tmp/smarthome-hub-sync-deploy"
+    home: "/home/admin"
+    app: "{{ home }}/smarthome-hub-sync"
   tasks:
-    - name: install rsync on the remote machin
-      apt: pkg=rsync update_cache=yes
+    - name: install rsync on the remote machine
+      apt: pkg=rsync update_cache=yes cache_valid_time=3600
       sudo: yes
 
     - name: checkout the hub repo
       local_action: git dest={{ tmp_dir }}
           repo=git@github.com:smart-home/smarthome-hub-sync.git
+    - local_action: file dest={{ tmp_dir }}/smarthome-remote-key mode=600
 
     - name: upload the hub code to the node
-      synchronize: src={{ tmp_dir }} dest=/home/admin/smarthome-hub-sync/
+      synchronize: src={{ tmp_dir }}/ dest={{ app }}/
 
-    # TODO: make this a decent playbook
-    - command: /home/admin/smarthome-hub-sync/smarthome-hub-setup.sh
+    - name: apt install
+      apt: pkg={{ item }} update_cache=yes cache_valid_time=3600
+      with_items:
+        - python-virtualenv
+        - python-dev
+        - build-essential
+      sudo: yes
+
+    # TODO: prebuild wheels of the dependencies
+
+    - name: install requirements.txt
+      pip: requirements={{ app }}/requirements.txt virtualenv={{ home }}/ENV/
+
+    - name: mkdir logs
+      file: dest={{ app }}/logs state=directory
+    - name: mkdir var
+      file: dest={{ app }}/var state=directory
+
+    - name: get jq
+      get_url: url=https://github.com/stedolan/jq/raw/gh-pages/download/linux64/jq
+          dest={{ home }}/jq mode=0755
+    - name: extract remote host
+      command: "{{ home }}/jq --raw-output .remotehost {{ app }}/config.json"
+      register: jq
+    - name: cache the remote host key
+      shell: ssh-keyscan -t ecdsa,rsa,dsa {{ jq.stdout }} >> ~/.ssh/known_hosts
+
+    - name: create cron entry
+      cron: name="run smarthome-hub"
+          job="cd '{{ app }}'; '{{ app }}/smarthome-hub-runner.sh'"
