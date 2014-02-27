@@ -83,13 +83,16 @@
       shell: ssh-keyscan -t ecdsa,rsa,dsa {{ jq.stdout }} >> ~/.ssh/known_hosts
 
     - name: extract the folders that have to be created
-      command: "{{ home }}/jq --raw-output '[.logs_path+(.logging_modules|.[]), .logs_path, .data_path]|.[]' {{ app }}/config.json"
+      command: "{{ home }}/jq --raw-output '[.logs_path+(.logging_modules|.[]), .logs_path, .data_path, .watchdog_path]|.[]' {{ app }}/config.json"
       register: jq
     - debug: var=jq.stdout_lines
     - name: mkdir
       file: path={{ item }} state=directory
       with_items: jq.stdout_lines
 
-    - name: create cron entry
-      cron: name="run smarthome-hub"
-          job="cd '{{ app }}'; '{{ app }}/smarthome-hub-runner.sh'"
+    - name: create cron entries
+      cron: name="run '{{ item }}'"
+          job="cd '{{ app }}'; '{{ app }}/{{ item }}'"
+      with_items:
+        - smarthome-hub-runner.sh
+        - smarthome-hub-watchdog.sh
