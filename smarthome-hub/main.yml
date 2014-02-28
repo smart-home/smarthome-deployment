@@ -17,10 +17,20 @@
     - python-virtualenv
     - python-dev
     - build-essential
+    - uuid-runtime
   sudo: yes
 
-# TODO: prebuild wheels of the dependencies
+# TODO: put the ~/.hub-id path in config.json
+- name: generate hub unique UUID if not existing
+  shell: creates={{ home }}/.hub-id
+      uuidgen > {{ home }}/.hub-id
+- name: get the hub unique UUID
+  command: "cat {{ home }}/.hub-id"
+  register: hub_id
+- debug: >
+    msg="hub-id: {{ hub_id.stdout }}"
 
+# TODO: prebuild wheels of the dependencies
 - name: install requirements.txt
   pip: requirements={{ app }}/requirements.txt virtualenv={{ home }}/ENV/
 
@@ -34,7 +44,8 @@
   shell: ssh-keyscan -t ecdsa,rsa,dsa {{ jq.stdout }} >> ~/.ssh/known_hosts
 
 - name: extract the folders that have to be created
-  command: "{{ home }}/jq --raw-output '[.logs_path+(.logging_modules|.[]), .logs_path, .data_path, .watchdog_path]|.[]' {{ app }}/config.json"
+  command: >
+      {{ home }}/jq --raw-output '[.logs_path+"{{ hub_id.stdout }}/"+(.logging_modules|.[]), .logs_path+"{{ hub_id.stdout }}/", .data_path+"{{ hub_id.stdout }}/", .watchdog_path]|.[]' {{ app }}/config.json
   register: jq
 - debug: var=jq.stdout_lines
 - name: mkdir
