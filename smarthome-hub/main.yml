@@ -20,6 +20,11 @@
     - uuid-runtime
   sudo: yes
 
+- name: install the google-dns tool
+  copy: src=google-dns dest=/usr/local/bin/google-dns
+      owner=root group=root mode=0755
+  sudo: yes
+
 # TODO: put the ~/.hub-id path in config.json
 - name: generate hub unique UUID if not existing
   shell: creates={{ home }}/.hub-id
