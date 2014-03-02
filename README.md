@@ -85,3 +85,13 @@ Then simply deploy/update with
 ```
 ansible-playbook -i inventory.ini rpi.yml
 ```
+
+## Custom hub_id
+
+You can specify a custom `~/.hub_id` by adding the following argument to any call of `ansible-playbook`
+
+```
+--extra-vars="user_hub_id=aa71379e-c92c-4891-8453-0003b1f9d9ef"
+```
+
+Required format is `[a-z0-9-]+`.
