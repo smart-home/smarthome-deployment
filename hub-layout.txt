@@ -7,12 +7,16 @@
 │   ├── logs
 │   │   └── 117543f4-565f-4c14-936c-806b011fbfb1
 │   │       ├── monitor
-│   │       │   └── monitor-log.2014-03-02-00.json
+│   │       │   ├── monitor-log.2014-03-02-00.json
+│   │       │   └── monitor-log.2014-03-02-01.json
 │   │       ├── smarthome-hub-sync.2014-03-02-00.log
+│   │       ├── smarthome-hub-sync.2014-03-02-01.log
 │   │       ├── timesync
-│   │       │   └── timesync-log.2014-03-02-00.csv
+│   │       │   ├── timesync-log.2014-03-02-00.csv
+│   │       │   └── timesync-log.2014-03-02-01.csv
 │   │       └── watchdog
-│   │           └── watchdog.2014-03-02-00.log
+│   │           ├── watchdog.2014-03-02-00.log
+│   │           └── watchdog.2014-03-02-01.log
 │   └── watchdog
 ├── smart-home-config
 │   ├── config
