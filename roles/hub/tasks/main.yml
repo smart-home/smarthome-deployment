@@ -42,6 +42,13 @@
 - debug: >
     msg="hub-id: {{ hub_id.stdout }}"
 
+- name: create /etc/wpa_supplicant/
+  file: path=/etc/wpa_supplicant/ state=directory
+  sudo: yes
+- name: pupulate /etc/wpa_supplicant/wpa_supplicant.conf
+  script: wpa_supplicant-conf.sh {{ home }} {{ config }}/config
+  sudo: yes
+
 # TODO: prebuild wheels of the dependencies
 - name: install requirements.txt
   pip: requirements={{ app }}/requirements.txt virtualenv={{ home }}/ENV/
