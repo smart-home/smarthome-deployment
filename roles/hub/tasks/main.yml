@@ -19,12 +19,11 @@
 - name: upload the config repo to the node
   synchronize: src={{ tmp_dir }}/smart-home-config/ dest={{ config }}/
 
+
 - name: apt install
   apt: pkg={{ item }} update_cache=yes cache_valid_time=3600
   with_items:
     - python-virtualenv
-    - python-dev
-    - build-essential
     - uuid-runtime
   sudo: yes
 
@@ -32,6 +31,23 @@
   copy: src=google-dns dest=/usr/local/bin/google-dns
       owner=root group=root mode=0755
   sudo: yes
+
+- name: install jq
+  get_url: url=https://github.com/stedolan/jq/raw/gh-pages/download/linux64/jq
+      dest=/usr/local/bin/jq owner=root group=root mode=0755
+  sudo: yes
+
+- name: create and update the virtualenv
+  pip: virtualenv={{ home }}/ENV/ name={{ item }} state=latest
+  with_items:
+    - pip
+    - setuptools
+- name: upload the wheelhouse
+  copy: src=wheelhouse dest={{ home }}
+- name: install requirements.txt
+  pip: virtualenv={{ home }}/ENV/ requirements={{ app }}/requirements.txt
+      extra_args="--use-wheel --find-links={{ home }}/wheelhouse"
+
 
 # TODO: put the ~/.hub-id path in config.json
 - name: generate hub unique UUID if not existing
@@ -48,15 +64,6 @@
   sudo: yes
 - name: pupulate /etc/wpa_supplicant/wpa_supplicant.conf
   script: wpa_supplicant-conf.sh {{ home }} {{ config }}/config
-  sudo: yes
-
-# TODO: prebuild wheels of the dependencies
-- name: install requirements.txt
-  pip: requirements={{ app }}/requirements.txt virtualenv={{ home }}/ENV/
-
-- name: install jq
-  get_url: url=https://github.com/stedolan/jq/raw/gh-pages/download/linux64/jq
-      dest=/usr/local/bin/jq owner=root group=root mode=0755
   sudo: yes
 
 - name: extract remote host
