@@ -4,12 +4,19 @@
   sudo: yes
 
 - name: checkout the hub repo
-  local_action: git dest={{ tmp_dir }}
+  local_action: git dest={{ tmp_dir }}/smarthome-hub-sync
       repo=git@github.com:smart-home/smarthome-hub-sync.git
 - local_action: file dest={{ tmp_dir }}/smarthome-remote-key mode=600
 
+- name: checkout the config repo
+  local_action: git dest={{ tmp_dir }}/smart-home-config
+      repo=git@github.com:smart-home/smart-home-config.git
+
 - name: upload the hub code to the node
-  synchronize: src={{ tmp_dir }}/ dest={{ app }}/
+  synchronize: src={{ tmp_dir }}/smarthome-hub-sync/ dest={{ app }}/
+
+- name: upload the config repo to the node
+  synchronize: src={{ tmp_dir }}/smart-home-config/ dest={{ config }}/
 
 - name: apt install
   apt: pkg={{ item }} update_cache=yes cache_valid_time=3600
@@ -39,27 +46,30 @@
 - name: install requirements.txt
   pip: requirements={{ app }}/requirements.txt virtualenv={{ home }}/ENV/
 
-- name: get jq
+- name: install jq
   get_url: url=https://github.com/stedolan/jq/raw/gh-pages/download/linux64/jq
-      dest={{ home }}/jq mode=0755
+      dest=/usr/local/bin/jq owner=root group=root mode=0755
+  sudo: yes
+
 - name: extract remote host
-  command: "{{ home }}/jq --raw-output .remotehost {{ app }}/config.json"
-  register: jq
+  shell: "{{ app }}/config.sh | jq --raw-output .remotehost"
+  register: remotehost
 - name: cache the remote host key
-  shell: ssh-keyscan -t ecdsa,rsa,dsa {{ jq.stdout }} >> ~/.ssh/known_hosts
+  shell: >
+      ssh-keyscan -t ecdsa,rsa,dsa {{ remotehost.stdout }} >> ~/.ssh/known_hosts
 
 - name: extract the folders that have to be created
-  command: >
-      {{ home }}/jq --raw-output '[.logs_path+"{{ hub_id.stdout }}/"+(.logging_modules|.[]), .logs_path+"{{ hub_id.stdout }}/", .data_path+"{{ hub_id.stdout }}/", .watchdog_path]|.[]' {{ app }}/config.json
-  register: jq
-- debug: var=jq.stdout_lines
+  shell: >
+      {{ app }}/config.sh | jq --raw-output '[.logs_path+"{{ hub_id.stdout }}/"+(.logging_modules|.[]), .logs_path+"{{ hub_id.stdout }}/", .data_path+"{{ hub_id.stdout }}/", .watchdog_path]|.[]'
+  register: folders
+- debug: var=folders.stdout_lines
 - name: mkdir
   file: path={{ item }} state=directory
-  with_items: jq.stdout_lines
+  with_items: folders.stdout_lines
 
 - name: create cron entries
   cron: name="run '{{ item }}'"
-      job="cd '{{ app }}'; '{{ app }}/{{ item }}'"
+      job=". /etc/profile; . $HOME/.profile; cd '{{ app }}'; '{{ app }}/{{ item }}'"
   with_items:
     - smarthome-hub-runner.sh
     - smarthome-hub-watchdog.sh

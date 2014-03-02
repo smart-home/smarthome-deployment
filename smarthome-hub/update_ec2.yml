@@ -8,8 +8,9 @@
   gather_facts: True
   remote_user: admin
   vars:
-    tmp_dir: "/tmp/smarthome-hub-sync-deploy"
+    tmp_dir: "/tmp/smarthome-hub-deploy"
     home: "/home/admin"
     app: "{{ home }}/smarthome-hub-sync"
+    config: "{{ home }}/smart-home-config"
   tasks:
     - include: main.yml
