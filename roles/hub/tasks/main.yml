@@ -6,7 +6,8 @@
 - name: checkout the hub repo
   local_action: git dest={{ tmp_dir }}/smarthome-hub-sync
       repo=git@github.com:smart-home/smarthome-hub-sync.git
-- local_action: file dest={{ tmp_dir }}/smarthome-remote-key mode=600
+- local_action: file mode=600
+      dest={{ tmp_dir }}/smarthome-hub-sync/smarthome-remote-key
 
 - name: checkout the config repo
   local_action: git dest={{ tmp_dir }}/smart-home-config
