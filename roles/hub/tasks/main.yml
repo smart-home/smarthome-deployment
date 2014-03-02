@@ -41,13 +41,6 @@
       extra_args="--use-wheel --find-links={{ home }}/wheelhouse"
 
 
-- include: armv6l.yml
-  when: ansible_machine=="armv6l"
-- include: x86_64.yml
-  when: ansible_machine=="x86_64"
-
-
-# TODO: put the ~/.hub-id path in config.json
 - name: generate hub unique UUID if not existing
   shell: creates={{ home }}/.hub-id
       uuidgen > {{ home }}/.hub-id
@@ -57,12 +50,12 @@
 - debug: >
     msg="hub-id: {{ hub_id.stdout }}"
 
-- name: create /etc/wpa_supplicant/
-  file: path=/etc/wpa_supplicant/ state=directory
-  sudo: yes
-- name: pupulate /etc/wpa_supplicant/wpa_supplicant.conf
-  script: wpa_supplicant-conf.sh {{ home }} {{ config }}/config
-  sudo: yes
+
+- include: armv6l.yml
+  when: ansible_machine=="armv6l"
+- include: x86_64.yml
+  when: ansible_machine=="x86_64"
+
 
 - name: extract remote host
   shell: "{{ app }}/config.sh | jq --raw-output .remotehost"
