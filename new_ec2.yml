@@ -33,7 +33,17 @@
       with_items: ec2_info.instances
 
 - hosts: hub_ec2_hosts
+  gather_facts: False
+  remote_user: admin
+  sudo: yes
+  tasks:
+    - user: name=smarthome
+    - user: name=admin password=!
+
+- hosts: hub_ec2_hosts
   gather_facts: True
   remote_user: admin
+  sudo_user: smarthome
+  sudo: yes
   roles:
     - hub

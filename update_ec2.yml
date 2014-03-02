@@ -1,5 +1,15 @@
 - hosts: tag_smarthome_hub
+  gather_facts: False
+  remote_user: admin
+  sudo: yes
+  tasks:
+    - user: name=smarthome
+    - user: name=admin password=!
+
+- hosts: tag_smarthome_hub
   gather_facts: True
   remote_user: admin
+  sudo_user: smarthome
+  sudo: yes
   roles:
     - hub

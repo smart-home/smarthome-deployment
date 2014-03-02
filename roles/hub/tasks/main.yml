@@ -1,23 +1,20 @@
 ---
-- name: install rsync on the remote machine
-  apt: pkg=rsync update_cache=yes cache_valid_time=3600
-  sudo: yes
+- name: install git on the remote machine
+  apt: pkg=git update_cache=yes cache_valid_time=3600
+  sudo_user: root
+
+- file: path={{ home }}/.ssh state=directory
+- name: upload the smarthome-services id_rsa
+  copy: src=smarthome-services dest={{ home }}/.ssh/id_rsa mode=600
+
+- name: cache the github.com host key
+  shell: ssh-keyscan -t ecdsa,rsa,dsa github.com >> ~/.ssh/known_hosts
 
 - name: checkout the hub repo
-  local_action: git dest={{ tmp_dir }}/smarthome-hub-sync
-      repo=git@github.com:smart-home/smarthome-hub-sync.git
-- local_action: file mode=600
-      dest={{ tmp_dir }}/smarthome-hub-sync/smarthome-remote-key
-
+  git: dest={{ app }} repo=git@github.com:smart-home/smarthome-hub-sync.git
+- file: mode=600 dest={{ app }}/smarthome-remote-key
 - name: checkout the config repo
-  local_action: git dest={{ tmp_dir }}/smart-home-config
-      repo=git@github.com:smart-home/smart-home-config.git
-
-- name: upload the hub code to the node
-  synchronize: src={{ tmp_dir }}/smarthome-hub-sync/ dest={{ app }}/
-
-- name: upload the config repo to the node
-  synchronize: src={{ tmp_dir }}/smart-home-config/ dest={{ config }}/
+  git: dest={{ config }} repo=git@github.com:smart-home/smart-home-config.git
 
 
 - name: apt install
@@ -25,12 +22,13 @@
   with_items:
     - python-virtualenv
     - uuid-runtime
-  sudo: yes
+    - rsync
+  sudo_user: root
 
 - name: install the google-dns tool
   copy: src=google-dns dest=/usr/local/bin/google-dns
       owner=root group=root mode=0755
-  sudo: yes
+  sudo_user: root
 
 - name: create and update the virtualenv
   pip: virtualenv={{ home }}/ENV/ name=pip state=latest
@@ -86,6 +84,11 @@
 - name: mkdir
   file: path={{ item }} state=directory
   with_items: folders.stdout_lines
+
+- name: setup sudo
+  template: src=sudoers dest=/etc/sudoers.d/smarthome validate='visudo -cf %s'
+      owner=root group=root
+  sudo_user: root
 
 - name: create cron entries
   cron: name="run '{{ item }}'"

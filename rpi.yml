@@ -1,5 +1,15 @@
 - hosts: raspberrypi
+  gather_facts: False
+  remote_user: pi
+  sudo: yes
+  tasks:
+    - user: name=smarthome
+    - user: name=pi password=!
+
+- hosts: raspberrypi
   gather_facts: True
   remote_user: pi
+  sudo_user: smarthome
+  sudo: yes
   roles:
     - hub
