@@ -32,21 +32,19 @@
       owner=root group=root mode=0755
   sudo: yes
 
-- name: install jq
-  get_url: url=https://github.com/stedolan/jq/raw/gh-pages/download/linux64/jq
-      dest=/usr/local/bin/jq owner=root group=root mode=0755
-  sudo: yes
-
 - name: create and update the virtualenv
-  pip: virtualenv={{ home }}/ENV/ name={{ item }} state=latest
-  with_items:
-    - pip
-    - setuptools
+  pip: virtualenv={{ home }}/ENV/ name=pip state=latest
 - name: upload the wheelhouse
   copy: src=wheelhouse dest={{ home }}
 - name: install requirements.txt
   pip: virtualenv={{ home }}/ENV/ requirements={{ app }}/requirements.txt
       extra_args="--use-wheel --find-links={{ home }}/wheelhouse"
+
+
+- include: armv6l.yml
+  when: ansible_machine=="armv6l"
+- include: x86_64.yml
+  when: ansible_machine=="x86_64"
 
 
 # TODO: put the ~/.hub-id path in config.json
@@ -77,7 +75,6 @@
   shell: >
       {{ app }}/config.sh | jq --raw-output '[.logs_path+"{{ hub_id.stdout }}/"+(.logging_modules|.[]), .logs_path+"{{ hub_id.stdout }}/", .data_path+"{{ hub_id.stdout }}/", .watchdog_path]|.[]'
   register: folders
-- debug: var=folders.stdout_lines
 - name: mkdir
   file: path={{ item }} state=directory
   with_items: folders.stdout_lines

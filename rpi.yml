@@ -1,0 +1,5 @@
+- hosts: raspberrypi
+  gather_facts: True
+  remote_user: pi
+  roles:
+    - hub

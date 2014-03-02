@@ -1,11 +1,5 @@
 # Playbook to provision a micro EC2 instance and deploy the hub on it
 
-# To use it, first `pip install boto`,
-# set EC2_REGION, AWS_ACCESS_KEY and AWS_SECRET_KEY env variables
-# and then run it as:
-# `ansible-playbook -i inventory.ini new_ec2.yml \
-# --extra-vars "keypair_name=marvin_rsa security_group=Relax"`
-
 - hosts: localhost
   connection: local
   gather_facts: False
