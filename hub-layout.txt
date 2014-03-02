@@ -1,0 +1,35 @@
+/home/admin
+├── .hub_id
+├── network_strikes
+├── smarthome
+│   ├── data
+│   │   └── 117543f4-565f-4c14-936c-806b011fbfb1
+│   ├── logs
+│   │   └── 117543f4-565f-4c14-936c-806b011fbfb1
+│   │       ├── monitor
+│   │       │   └── monitor-log.2014-03-02-00.json
+│   │       ├── smarthome-hub-sync.2014-03-02-00.log
+│   │       ├── timesync
+│   │       │   └── timesync-log.2014-03-02-00.csv
+│   │       └── watchdog
+│   │           └── watchdog.2014-03-02-00.log
+│   └── watchdog
+├── smart-home-config
+│   ├── config
+│   │   ├── 117543f4-565f-4c14-936c-806b011fbfb1
+│   │   │   └── config.117543f4-565f-4c14-936c-806b011fbfb1.json
+│   │   └── config.json
+│   └── README.md
+├── smarthome-hub-sync
+│   ├── config.sh
+│   ├── requirements.txt
+│   ├── smarthome-hub-runner.sh
+│   ├── smarthome-hub-setup.sh
+│   ├── smarthome-hub-sync.py
+│   ├── smarthome-hub-sync.sh
+│   ├── smarthome-hub-watchdog.py
+│   ├── smarthome-hub-watchdog.sh
+│   ├── smarthome-remote-key
+│   └── smarthome-remote-key.pub
+├── smarthome-hub-sync.lock
+└── smarthome-hub-watchdog.lock
