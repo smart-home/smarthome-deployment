@@ -44,6 +44,21 @@
 - name: generate hub unique UUID if not existing
   shell: creates={{ home }}/.hub-id
       uuidgen > {{ home }}/.hub-id
+  when: user_hub_id is not defined
+
+- name: check the user_hub_id/1
+  shell: executable=/bin/bash [[ {{ user_hub_id }} =~ ^[a-z0-9-]+$ ]]
+  when: user_hub_id is defined
+  register: result
+  ignore_errors: True
+- name: check the user_hub_id/2
+  fail: msg="invalid characters in the user_hub_id"
+  when: result|failed
+
+- name: install the user_hub_id
+  copy: content={{ user_hub_id }} dest={{ home }}/.hub-id
+  when: user_hub_id is defined
+
 - name: get the hub unique UUID
   command: "cat {{ home }}/.hub-id"
   register: hub_id
