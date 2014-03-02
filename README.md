@@ -62,3 +62,26 @@ ansible-playbook -i ec2.py update_ec2.yml
 ```
 
 This will get all the tagged hub instances in your account to the current version of the playbook.
+
+## RPi
+
+System requirements:
+
+* installed Raspbian
+* [recommended] expanded root partition
+* ssh key installed for the user **pi**
+
+(NOTE: these steps will be changed/automated in the future)
+
+Add the RPi IP(s) to `inventory.ini` like this
+
+```
+[raspberrypi]
+192.168.1.43
+```
+
+Then simply deploy/update with
+
+```
+ansible-playbook -i inventory.ini rpi.yml
+```
