@@ -43,13 +43,13 @@
 - hosts: hub_ec2_hosts
   gather_facts: True
   remote_user: admin
-  roles:
-    - hub-pull
-
-- hosts: hub_ec2_hosts
-  gather_facts: True
-  remote_user: admin
   sudo_user: smarthome
   sudo: yes
   roles:
     - hub
+
+- hosts: hub_ec2_hosts
+  gather_facts: True
+  remote_user: admin
+  roles:
+    - hub-pull
