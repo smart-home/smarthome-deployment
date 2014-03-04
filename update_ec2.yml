@@ -9,6 +9,12 @@
 - hosts: tag_smarthome_hub
   gather_facts: True
   remote_user: admin
+  roles:
+    - hub-pull
+
+- hosts: tag_smarthome_hub
+  gather_facts: True
+  remote_user: admin
   sudo_user: smarthome
   sudo: yes
   roles:

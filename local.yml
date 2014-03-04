@@ -1,0 +1,11 @@
+- hosts: localhost
+  gather_facts: True
+  roles:
+    - hub-pull
+
+- hosts: localhost
+  gather_facts: True
+  sudo_user: smarthome
+  sudo: yes
+  roles:
+    - hub

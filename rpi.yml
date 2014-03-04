@@ -9,6 +9,12 @@
 - hosts: raspberrypi
   gather_facts: True
   remote_user: pi
+  roles:
+    - hub-pull
+
+- hosts: raspberrypi
+  gather_facts: True
+  remote_user: pi
   sudo_user: smarthome
   sudo: yes
   roles:

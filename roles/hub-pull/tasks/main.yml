@@ -1,0 +1,41 @@
+- name: install dependencies
+  apt: pkg={{ item }} state=installed update_cache=yes cache_valid_time=3600
+  sudo: yes
+  with_items:
+    - git
+    - python-pip
+
+- name: mkdir ~/.ssh
+  file: path={{ home }}/.ssh state=directory
+- name: check for the smarthome-services id_rsa
+  stat: path={{ home }}/.ssh/id_rsa
+  register: p
+- name: upload the smarthome-services id_rsa
+  copy: src=smarthome-services dest={{ home }}/.ssh/id_rsa mode=600
+  when: p.stat.isreg is not defined or p.stat.isreg == false
+
+- name: cache the github.com host key
+  shell: creates="{{ home }}/.ssh/.cached-host-key-github.com"
+      ssh-keyscan -t ecdsa,rsa,dsa github.com >> ~/.ssh/known_hosts;
+      touch {{ home }}/.ssh/.cached-host-key-github.com
+
+- name: checkout the blobs repo
+  git: dest={{ blobs }} repo=git@github.com:smart-home/smarthome-deployment-blobs.git depth=1
+- name: create and update the virtualenv
+  pip: virtualenv={{ home }}/ENV/ name=pip state=latest
+- name: install ansible
+  pip: virtualenv={{ home }}/ENV/ name=ansible state=latest
+      extra_args="--use-wheel --find-links={{ blobs }}/wheelhouse"
+
+- name: copy ansible inventory file
+  copy: src=local_inventory.ini dest={{ home }}/inventory.ini mode=0644
+
+- name: mkdir
+  file: path={{ deploy_repo }} state=directory
+
+- name: create cron entries
+  cron: name="run ansible-pull" minute="*/15"
+      job=". /etc/profile; . $HOME/.profile; . {{ home }}/ENV/bin/activate; ansible-pull -o -i {{ home }}/inventory.ini -d {{ deploy_repo }} -U {{ repo_url }} >> {{ logfile }} 2>&1"
+
+# - name: Create logrotate entry for ansible-pull.log
+#   action: template src=templates/etc_logrotate.d_ansible-pull.j2 dest=/etc/logrotate.d/ansible-pull owner=root group=root mode=0644

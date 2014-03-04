@@ -3,9 +3,14 @@
   apt: pkg=git update_cache=yes cache_valid_time=3600
   sudo_user: root
 
-- file: path={{ home }}/.ssh state=directory
+- name: mkdir ~/.ssh
+  file: path={{ home }}/.ssh state=directory
+- name: check for the smarthome-services id_rsa
+  stat: path={{ home }}/.ssh/id_rsa
+  register: p
 - name: upload the smarthome-services id_rsa
   copy: src=smarthome-services dest={{ home }}/.ssh/id_rsa mode=600
+  when: p.stat.isreg is not defined or p.stat.isreg == false
 
 - name: cache the github.com host key
   shell: creates="{{ home }}/.ssh/.cached-host-key-github.com"
