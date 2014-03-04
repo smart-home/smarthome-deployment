@@ -14,13 +14,14 @@
   copy: src=smarthome-services dest={{ home }}/.ssh/id_rsa mode=600
   when: p.stat.isreg is not defined or p.stat.isreg == false
 
-- name: cache the github.com host key
-  shell: creates="{{ home }}/.ssh/.cached-host-key-github.com"
-      ssh-keyscan -t ecdsa,rsa,dsa github.com >> ~/.ssh/known_hosts;
-      touch {{ home }}/.ssh/.cached-host-key-github.com
+# - name: cache the github.com host key
+#   shell: creates="{{ home }}/.ssh/.cached-host-key-github.com"
+#       ssh-keyscan -t ecdsa,rsa,dsa github.com >> ~/.ssh/known_hosts;
+#       touch {{ home }}/.ssh/.cached-host-key-github.com
 
 - name: checkout the blobs repo
-  git: dest={{ blobs }} repo=git@github.com:smart-home/smarthome-deployment-blobs.git depth=1
+  git: dest={{ blobs }} accept_hostkey=yes depth=1
+      repo=git@github.com:smart-home/smarthome-deployment-blobs.git
 - name: update pip
   pip: name=pip state=latest
   sudo: yes
