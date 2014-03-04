@@ -11,10 +11,10 @@
   shell: ssh-keyscan -t ecdsa,rsa,dsa github.com >> ~/.ssh/known_hosts
 
 - name: checkout the hub repo
-  git: dest={{ app }} repo=git@github.com:smart-home/smarthome-hub-sync.git
+  git: dest={{ app }} repo=git@github.com:smart-home/smarthome-hub-sync.git depth=1
 - file: mode=600 dest={{ app }}/smarthome-remote-key
 - name: checkout the config repo
-  git: dest={{ config }} repo=git@github.com:smart-home/smart-home-config.git
+  git: dest={{ config }} repo=git@github.com:smart-home/smart-home-config.git depth=1
 
 
 - name: apt install
