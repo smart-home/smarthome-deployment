@@ -1,38 +1,105 @@
 /home/admin
-├── .hub_id
+├── ansible-pull.log
+├── inventory.ini
+├── smarthome-deployment
+│   ├── hub-layout.txt
+│   ├── inventory.ini
+│   ├── local.yml
+│   ├── new_ec2.yml
+│   ├── README.md
+│   ├── roles
+│   │   ├── hub
+│   │   │   ├── files
+│   │   │   │   ├── google-dns
+│   │   │   │   └── wpa_supplicant-conf.sh
+│   │   │   ├── tasks
+│   │   │   │   ├── armv6l.yml
+│   │   │   │   ├── main.yml
+│   │   │   │   └── x86_64.yml
+│   │   │   ├── templates
+│   │   │   │   └── sudoers
+│   │   │   └── vars
+│   │   │       └── main.yml
+│   │   └── hub-pull
+│   │       ├── files
+│   │       │   └── local_inventory.ini
+│   │       ├── tasks
+│   │       │   └── main.yml
+│   │       └── vars
+│   │           └── main.yml
+│   ├── rpi.yml
+│   └── update_ec2.yml
+└── smarthome-deployment-blobs
+    ├── jq-rpi
+    ├── README.md
+    └── wheelhouse
+        ├── ecdsa-0.10-py27-none-any.whl
+        ├── Jinja2-2.7.2-py27-none-any.whl
+        ├── MarkupSafe-0.18-cp27-none-linux_armv6l.whl
+        ├── MarkupSafe-0.18-cp27-none-linux_x86_64.whl
+        ├── netifaces-0.8-cp27-none-linux_armv6l.whl
+        ├── netifaces-0.8-cp27-none-linux_x86_64.whl
+        ├── ntplib-0.3.2-py27-none-any.whl
+        ├── paramiko-1.12.2-py27-none-any.whl
+        ├── psutil-1.2.1-cp27-none-linux_armv6l.whl
+        ├── psutil-1.2.1-cp27-none-linux_x86_64.whl
+        ├── pycrypto-2.6.1-cp27-none-linux_armv6l.whl
+        ├── pycrypto-2.6.1-cp27-none-linux_x86_64.whl
+        ├── PyYAML-3.10-cp27-none-linux_armv6l.whl
+        ├── PyYAML-3.10-cp27-none-linux_x86_64.whl
+        ├── uptime-3.0.1-cp27-none-linux_armv6l.whl
+        └── uptime-3.0.1-cp27-none-linux_x86_64.whl
+        
+/home/smarthome
 ├── network_strikes
 ├── smarthome
-│   ├── data
-│   │   └── 117543f4-565f-4c14-936c-806b011fbfb1
-│   ├── logs
-│   │   └── 117543f4-565f-4c14-936c-806b011fbfb1
-│   │       ├── monitor
-│   │       │   ├── monitor-log.2014-03-02-00.json
-│   │       │   └── monitor-log.2014-03-02-01.json
-│   │       ├── smarthome-hub-sync.2014-03-02-00.log
-│   │       ├── smarthome-hub-sync.2014-03-02-01.log
-│   │       ├── timesync
-│   │       │   ├── timesync-log.2014-03-02-00.csv
-│   │       │   └── timesync-log.2014-03-02-01.csv
-│   │       └── watchdog
-│   │           ├── watchdog.2014-03-02-00.log
-│   │           └── watchdog.2014-03-02-01.log
-│   └── watchdog
+│   ├── data
+│   │   └── 5b4509c4-acf9-4082-a973-4d3e80f9f3c5
+│   ├── logs
+│   │   └── 5b4509c4-acf9-4082-a973-4d3e80f9f3c5
+│   │       ├── monitor
+│   │       │   └── monitor-log.2014-03-04-16.json
+│   │       ├── smarthome-hub-sync.2014-03-04-16.log
+│   │       ├── timesync
+│   │       │   └── timesync-log.2014-03-04-16.csv
+│   │       └── watchdog
+│   │           └── watchdog.2014-03-04-16.log
+│   └── watchdog
 ├── smart-home-config
-│   ├── config
-│   │   ├── 117543f4-565f-4c14-936c-806b011fbfb1
-│   │   │   └── config.117543f4-565f-4c14-936c-806b011fbfb1.json
-│   │   └── config.json
-│   └── README.md
+│   ├── config
+│   │   ├── aa71379e-c92c-4891-8453-0003b1f9d9ef
+│   │   │   └── wlan.aa71379e-c92c-4891-8453-0003b1f9d9ef.cfg
+│   │   ├── config.json
+│   │   └── wlan.cfg
+│   └── README.md
+├── smarthome-deployment-blobs
+│   ├── jq-rpi
+│   ├── README.md
+│   └── wheelhouse
+│       ├── ecdsa-0.10-py27-none-any.whl
+│       ├── Jinja2-2.7.2-py27-none-any.whl
+│       ├── MarkupSafe-0.18-cp27-none-linux_armv6l.whl
+│       ├── MarkupSafe-0.18-cp27-none-linux_x86_64.whl
+│       ├── netifaces-0.8-cp27-none-linux_armv6l.whl
+│       ├── netifaces-0.8-cp27-none-linux_x86_64.whl
+│       ├── ntplib-0.3.2-py27-none-any.whl
+│       ├── paramiko-1.12.2-py27-none-any.whl
+│       ├── psutil-1.2.1-cp27-none-linux_armv6l.whl
+│       ├── psutil-1.2.1-cp27-none-linux_x86_64.whl
+│       ├── pycrypto-2.6.1-cp27-none-linux_armv6l.whl
+│       ├── pycrypto-2.6.1-cp27-none-linux_x86_64.whl
+│       ├── PyYAML-3.10-cp27-none-linux_armv6l.whl
+│       ├── PyYAML-3.10-cp27-none-linux_x86_64.whl
+│       ├── uptime-3.0.1-cp27-none-linux_armv6l.whl
+│       └── uptime-3.0.1-cp27-none-linux_x86_64.whl
 ├── smarthome-hub-sync
-│   ├── config.sh
-│   ├── requirements.txt
-│   ├── smarthome-hub-runner.sh
-│   ├── smarthome-hub-setup.sh
-│   ├── smarthome-hub-sync.py
-│   ├── smarthome-hub-sync.sh
-│   ├── smarthome-hub-watchdog.py
-│   └── smarthome-hub-watchdog.sh
+│   ├── config.sh
+│   ├── requirements.txt
+│   ├── smarthome-hub-runner.sh
+│   ├── smarthome-hub-sync.py
+│   ├── smarthome-hub-sync.sh
+│   ├── smarthome-hub-watchdog.py
+│   └── smarthome-hub-watchdog.sh
 ├── smarthome-hub-sync.lock
 ├── smarthome-hub-watchdog.lock
 └── smarthome-remote-key
