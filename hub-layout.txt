@@ -32,8 +32,7 @@
 │   ├── smarthome-hub-sync.py
 │   ├── smarthome-hub-sync.sh
 │   ├── smarthome-hub-watchdog.py
-│   ├── smarthome-hub-watchdog.sh
-│   ├── smarthome-remote-key
-│   └── smarthome-remote-key.pub
+│   └── smarthome-hub-watchdog.sh
 ├── smarthome-hub-sync.lock
-└── smarthome-hub-watchdog.lock
+├── smarthome-hub-watchdog.lock
+└── smarthome-remote-key

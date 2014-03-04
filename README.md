@@ -18,6 +18,8 @@ And one with read access to the following repositories at the path `roles/hub-pu
 * smart-home/smarthome-deployment
 * smart-home/smarthome-deployment-blobs
 
+And finally one with write access to the remote data endpoint at the path `roles/hub-pull/files/smarthome-remote-key`.
+
 NOTE: these playbooks have been tested with passwordless keyfile access to both GitHub and EC2. They might get stuck with password prompts. Consider using `ssh-agent`.
 
 ## EC2
