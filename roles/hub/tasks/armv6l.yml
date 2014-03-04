@@ -1,6 +1,9 @@
 ---
-- name: armv6l | install jq
-  copy: src=jq-rpi dest=/usr/local/bin/jq owner=root group=root mode=0755
+- name: armv6l | install jq /1
+  command: cp {{ blobs }}/jq-rpi /usr/local/bin/jq
+  sudo_user: root
+- name: armv6l | install jq /2
+  file: path=/usr/local/bin/jq owner=root group=root mode=0755
   sudo_user: root
 
 - name: create /etc/wpa_supplicant/
