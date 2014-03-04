@@ -15,6 +15,8 @@
 - file: mode=600 dest={{ app }}/smarthome-remote-key
 - name: checkout the config repo
   git: dest={{ config }} repo=git@github.com:smart-home/smart-home-config.git depth=1
+- name: checkout the blobs repo
+  git: dest={{ blobs }} repo=git@github.com:smart-home/smarthome-deployment-blobs.git depth=1
 
 
 - name: apt install
@@ -32,11 +34,9 @@
 
 - name: create and update the virtualenv
   pip: virtualenv={{ home }}/ENV/ name=pip state=latest
-- name: upload the wheelhouse
-  copy: src=wheelhouse dest={{ home }}
 - name: install requirements.txt
   pip: virtualenv={{ home }}/ENV/ requirements={{ app }}/requirements.txt
-      extra_args="--use-wheel --find-links={{ home }}/wheelhouse"
+      extra_args="--use-wheel --find-links={{ blobs }}/wheelhouse"
 
 
 - name: generate hub unique UUID if not existing
