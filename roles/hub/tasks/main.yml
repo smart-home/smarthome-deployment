@@ -8,7 +8,9 @@
   copy: src=smarthome-services dest={{ home }}/.ssh/id_rsa mode=600
 
 - name: cache the github.com host key
-  shell: ssh-keyscan -t ecdsa,rsa,dsa github.com >> ~/.ssh/known_hosts
+  shell: creates="{{ home }}/.ssh/.cached-host-key-github.com"
+      ssh-keyscan -t ecdsa,rsa,dsa github.com >> ~/.ssh/known_hosts;
+      touch {{ home }}/.ssh/.cached-host-key-github.com
 
 - name: checkout the hub repo
   git: dest={{ app }} repo=git@github.com:smart-home/smarthome-hub-sync.git depth=1
@@ -74,8 +76,9 @@
   shell: "{{ app }}/config.sh | jq --raw-output .remotehost"
   register: remotehost
 - name: cache the remote host key
-  shell: >
-      ssh-keyscan -t ecdsa,rsa,dsa {{ remotehost.stdout }} >> ~/.ssh/known_hosts
+  shell: creates="{{ home }}/.ssh/.cached-host-key-{{ remotehost.stdout.strip() }}"
+      ssh-keyscan -t ecdsa,rsa,dsa {{ remotehost.stdout.strip() }} >> ~/.ssh/known_hosts;
+      touch {{ home }}/.ssh/.cached-host-key-{{ remotehost.stdout.strip() }}
 
 - name: extract the folders that have to be created
   shell: >
