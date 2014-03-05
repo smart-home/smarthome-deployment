@@ -1,4 +1,8 @@
 ---
+########################################################################
+#                    INSTALL GITHUB KEY AND CHECKOUT                   #
+########################################################################
+
 - name: install git on the remote machine
   apt: pkg=git update_cache=yes cache_valid_time=3600
   sudo_user: root
@@ -10,13 +14,6 @@
   register: p
 - name: upload the smarthome-services id_rsa
   copy: src=smarthome-services dest={{ home }}/.ssh/id_rsa mode=600
-  when: p.stat.isreg is not defined or p.stat.isreg == false
-
-- name: check for the smarthome-remote-key
-  stat: path={{ home }}/smarthome-remote-key
-  register: p
-- name: upload the smarthome-remote-key
-  copy: src=smarthome-remote-key dest={{ home }}/smarthome-remote-key mode=600
   when: p.stat.isreg is not defined or p.stat.isreg == false
 
 - name: cache the github.com host key
@@ -31,6 +28,10 @@
 - name: checkout the blobs repo
   git: dest={{ blobs }} repo=git@github.com:smart-home/smarthome-deployment-blobs.git depth=1
 
+
+########################################################################
+#                    DEPENDENCIES INSTALLATION                         #
+########################################################################
 
 - name: apt install
   apt: pkg={{ item }} update_cache=yes cache_valid_time=3600
@@ -51,6 +52,10 @@
   pip: virtualenv={{ home }}/ENV/ requirements={{ app }}/requirements.txt
       extra_args="--use-wheel --find-links={{ blobs }}/wheelhouse"
 
+
+########################################################################
+#                    GENERATE/GET/INSTALL THE HUB-ID                   #
+########################################################################
 
 - name: generate hub unique UUID if not existing
   shell: creates={{ home }}/.hub-id
@@ -77,12 +82,29 @@
 #     msg="hub-id: {{ hub_id.stdout }}"
 
 
+########################################################################
+#                    ARCHITECTURE-DEPENDENT IMPORTS                    #
+########################################################################
+
 - include: armv6l.yml
   when: ansible_machine=="armv6l"
 - include: x86_64.yml
   when: ansible_machine=="x86_64"
 
 
+########################################################################
+#                    MISC                                              #
+########################################################################
+
+# Install the smarthome-remote-key
+- name: check for the smarthome-remote-key
+  stat: path={{ home }}/smarthome-remote-key
+  register: p
+- name: upload the smarthome-remote-key
+  copy: src=smarthome-remote-key dest={{ home }}/smarthome-remote-key mode=600
+  when: p.stat.isreg is not defined or p.stat.isreg == false
+
+# Cache the remotehost SSH host key
 - name: extract remote host
   shell: "{{ app }}/config.sh | jq --raw-output .remotehost"
   register: remotehost
@@ -91,6 +113,7 @@
       ssh-keyscan -t ecdsa,rsa,dsa {{ remotehost.stdout.strip() }} >> ~/.ssh/known_hosts;
       touch {{ home }}/.ssh/.cached-host-key-{{ remotehost.stdout.strip() }}
 
+# Create folders
 - name: extract the folders that have to be created
   shell: >
       {{ app }}/config.sh | jq --raw-output '[.logs_path+(.logging_modules|.[]), .logs_path, .data_path, .watchdog_path]|.[]'
@@ -99,11 +122,13 @@
   file: path={{ item }} state=directory
   with_items: folders.stdout_lines
 
+# Setup sudoers file
 - name: setup sudo
   template: src=sudoers dest=/etc/sudoers.d/smarthome validate='visudo -cf %s'
       owner=root group=root
   sudo_user: root
 
+# Setup cronjobs
 - name: create cron entries
   cron: name="run '{{ item }}'"
       job=". /etc/profile; . $HOME/.profile; cd '{{ app }}'; '{{ app }}/{{ item }}'"

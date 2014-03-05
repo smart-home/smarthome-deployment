@@ -1,4 +1,5 @@
 ---
+############################# INSTALL JQ ################################
 - name: armv6l | install jq /1
   command: cp {{ blobs }}/jq-rpi /usr/local/bin/jq
   sudo_user: root
@@ -6,12 +7,13 @@
   file: path=/usr/local/bin/jq owner=root group=root mode=0755
   sudo_user: root
 
-- name: create /etc/wpa_supplicant/
+############################# SETUP WIFI ################################
+- name: armv6l | create /etc/wpa_supplicant/
   file: path=/etc/wpa_supplicant/ state=directory
   sudo_user: root
-- name: populate /etc/wpa_supplicant/wpa_supplicant.conf
+- name: armv6l | populate /etc/wpa_supplicant/wpa_supplicant.conf
   script: wpa_supplicant-conf.sh {{ home }} {{ config }}/config
   sudo_user: root
-- name: ifdown/ifup wlan0
+- name: armv6l | ifdown/ifup wlan0
   shell: ifdown wlan0; sleep 1; ifup wlan0
   sudo_user: root
