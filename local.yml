@@ -9,3 +9,11 @@
   gather_facts: True
   roles:
     - hub-pull
+
+- hosts: localhost
+  vars:
+    - home: "/home/{{ ansible_user_id }}"
+    - logfile: "{{ home }}/ansible-pull.log"
+  tasks:
+    # If the pull was successful, clear the log
+    - file: path={{ logfile }} state=absent
