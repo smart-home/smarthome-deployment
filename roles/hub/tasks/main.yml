@@ -70,11 +70,11 @@
   copy: content={{ user_hub_id }} dest={{ home }}/.hub-id
   when: user_hub_id is defined
 
-- name: get the hub unique UUID
-  command: "cat {{ home }}/.hub-id"
-  register: hub_id
-- debug: >
-    msg="hub-id: {{ hub_id.stdout }}"
+# - name: get the hub unique UUID
+#   command: "cat {{ home }}/.hub-id"
+#   register: hub_id
+# - debug: >
+#     msg="hub-id: {{ hub_id.stdout }}"
 
 
 - include: armv6l.yml
@@ -93,7 +93,7 @@
 
 - name: extract the folders that have to be created
   shell: >
-      {{ app }}/config.sh | jq --raw-output '[.logs_path+"{{ hub_id.stdout }}/"+(.logging_modules|.[]), .logs_path+"{{ hub_id.stdout }}/", .data_path+"{{ hub_id.stdout }}/", .watchdog_path]|.[]'
+      {{ app }}/config.sh | jq --raw-output '[.logs_path+(.logging_modules|.[]), .logs_path, .data_path, .watchdog_path]|.[]'
   register: folders
 - name: mkdir
   file: path={{ item }} state=directory
