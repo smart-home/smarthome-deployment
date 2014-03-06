@@ -78,9 +78,6 @@ System requirements:
 
 * installed Raspbian
 * [recommended] expanded root partition
-* ssh key installed for the user **pi**
-
-(NOTE: these steps will be changed/automated in the future)
 
 Add the RPi IP(s) to `inventory.ini` like this
 
@@ -89,7 +86,19 @@ Add the RPi IP(s) to `inventory.ini` like this
 192.168.1.43
 ```
 
-Then simply deploy/update with
+For the first deploy you will need *sshpass* for not typing in the default password interactively. OS X users can install it with
+
+```
+brew install https://gist.githubusercontent.com/stefanoverna/1513663/raw/3e98bf9e03feb7e31eeddcd08f89ca86163a376d/sshpass.rb
+```
+
+Then use this command
+
+```
+sshpass -p raspberry ansible-playbook -k -i inventory.ini rpi.yml
+```
+
+After the first deploy, you can update with simply
 
 ```
 ansible-playbook -i inventory.ini rpi.yml

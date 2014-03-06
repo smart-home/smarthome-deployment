@@ -38,6 +38,8 @@
   sudo: yes
   tasks:
     - user: name=smarthome
+    - authorized_key: user=admin
+        key="{{ lookup('file', 'keys/smarthome-services.pub') }}"
     - user: name=admin password=!
 
 - hosts: hub_ec2_hosts
