@@ -36,7 +36,7 @@
 
 - name: create cron entries
   cron: name="run ansible-pull" minute="*/15"
-      job=". /etc/profile; . $HOME/.profile; ansible-pull -o -i {{ home }}/inventory.ini -d {{ deploy_repo }} -U {{ repo_url }} >> {{ logfile }} 2>&1"
+      job=". /etc/profile; . $HOME/.profile; ansible-pull -o -i {{ home }}/inventory.ini -d {{ deploy_repo }} -U {{ repo_url }} >> {{ logfile }} 2>&1 && rm {{ logfile }}"
 
 # - name: Create logrotate entry for ansible-pull.log
 #   action: template src=templates/etc_logrotate.d_ansible-pull.j2 dest=/etc/logrotate.d/ansible-pull owner=root group=root mode=0644
