@@ -4,7 +4,8 @@
   sudo: yes
   tasks:
     - user: name=smarthome
-    - authorized_key: user=admin
+    - name: add smarthome-services to authorized_key
+      authorized_key: user=admin
         key="{{ lookup('file', 'keys/smarthome-services.pub') }}"
     - user: name=admin password=!
 
