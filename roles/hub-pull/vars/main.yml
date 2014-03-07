@@ -4,4 +4,4 @@ deploy_repo: "{{ home }}/smarthome-deployment"
 repo_url: "git@github.com:smart-home/smarthome-deployment.git"
 logfile: "{{ home }}/ansible-pull.log" # TODO
 blobs: "{{ home }}/smarthome-deployment-blobs"
-branch: "HEAD"
+branch: "master"
