@@ -98,6 +98,8 @@
 #                    MISC                                              #
 ########################################################################
 
+- include: drivers.yml
+
 # Install the smarthome-remote-key
 - name: check for the smarthome-remote-key
   stat: path={{ home }}/smarthome-remote-key
