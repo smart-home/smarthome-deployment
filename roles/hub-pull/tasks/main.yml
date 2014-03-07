@@ -36,7 +36,7 @@
 
 - name: create cron entries
   cron: name="run ansible-pull" minute="*/15"
-      job=". /etc/profile; . $HOME/.profile; ansible-pull -i {{ home }}/inventory.ini -d {{ deploy_repo }} -U {{ repo_url }} >> {{ logfile }} 2>&1 && rm {{ logfile }}"
+      job=". /etc/profile; . $HOME/.profile; ansible-pull -C {{ branch }} -i {{ home }}/inventory.ini -d {{ deploy_repo }} -U {{ repo_url }} >> {{ logfile }} 2>&1 && rm {{ logfile }}"
   # TODO: better ansible-pull run-on-updates strategy
 
 # - name: Create logrotate entry for ansible-pull.log
