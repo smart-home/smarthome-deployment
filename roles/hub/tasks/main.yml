@@ -27,6 +27,8 @@
   git: dest={{ config }} repo=git@github.com:smart-home/smart-home-config.git depth=1 version={{ branch }}
 - name: checkout the blobs repo
   git: dest={{ blobs }} repo=git@github.com:smart-home/smarthome-deployment-blobs.git depth=1 version={{ branch }}
+- name: checkout the drivers repo
+  git: dest={{ drivers }} repo=git@github.com:smart-home/smarthome-drivers.git depth=1 version={{ branch }}
 
 
 ########################################################################
@@ -116,7 +118,7 @@
 # Create folders
 - name: extract the folders that have to be created
   shell: >
-      {{ app }}/config.sh | jq --raw-output '[.logs_path+(.logging_modules|.[]), .logs_path, .data_path, .watchdog_path]|.[]'
+      {{ app }}/config.sh | jq --raw-output '[.logs_path+(.logging_modules|.[]), .logs_path+(.loaded_drivers|.[])+"-driver", .logs_path, .data_path, .watchdog_path]|.[]'
   register: folders
 - name: mkdir
   file: path={{ item }} state=directory
