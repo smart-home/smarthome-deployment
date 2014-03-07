@@ -118,7 +118,7 @@
 # Create folders
 - name: extract the folders that have to be created
   shell: >
-      {{ app }}/config.sh | jq --raw-output '[.logs_path+(.logging_modules|.[]), .logs_path, .data_path, .watchdog_path]|.[]'
+      {{ app }}/config.sh | jq --raw-output '[.logs_path+(.logging_modules|.[]), .logs_path+(.loaded_drivers|.[])+"-driver", .logs_path, .data_path, .watchdog_path]|.[]'
   register: folders
 - name: mkdir
   file: path={{ item }} state=directory
