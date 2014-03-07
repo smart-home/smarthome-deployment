@@ -27,6 +27,8 @@
   git: dest={{ config }} repo=git@github.com:smart-home/smart-home-config.git depth=1 version={{ branch }}
 - name: checkout the blobs repo
   git: dest={{ blobs }} repo=git@github.com:smart-home/smarthome-deployment-blobs.git depth=1 version={{ branch }}
+- name: checkout the drivers repo
+  git: dest={{ drivers }} repo=git@github.com:smart-home/smarthome-drivers.git depth=1 version={{ branch }}
 
 
 ########################################################################
