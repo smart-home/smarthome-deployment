@@ -4,7 +4,7 @@
 
 - name: extract the drivers names
   shell: >
-      {{ app }}/config.sh | jq --raw-output '.loaded_drivers|.[]'
+      {{ app }}/config.py | jq --raw-output '.loaded_drivers|.[]'
   register: driver_names
 
 - name: create and update the drivers virtualenvs

@@ -110,7 +110,7 @@
 
 # Cache the remotehost SSH host key
 - name: extract remote host
-  shell: "{{ app }}/config.sh | jq --raw-output .remotehost"
+  shell: "{{ app }}/config.py | jq --raw-output .remotehost"
   register: remotehost
 - name: cache the remote host key
   shell: creates="{{ home }}/.ssh/.cached-host-key-{{ remotehost.stdout.strip() }}"
@@ -120,7 +120,7 @@
 # Create folders
 - name: extract the folders that have to be created
   shell: >
-      {{ app }}/config.sh | jq --raw-output '[.logs_path+(.logging_modules|.[]), .logs_path+(.loaded_drivers|.[])+"-driver", .logs_path, .data_path, .watchdog_path]|.[]'
+      {{ app }}/config.py | jq --raw-output '[.logs_path+(.logging_modules|.[]), .logs_path+(.loaded_drivers|.[])+"-driver", .logs_path, .data_path, .watchdog_path]|.[]'
   register: folders
 - name: mkdir
   file: path={{ item }} state=directory
