@@ -2,6 +2,8 @@
 ############################# INSTALL JQ ################################
 - name: armv6l | install jq /1
   command: cp {{ blobs }}/jq-rpi /usr/local/bin/jq
+      creates=/usr/local/bin/jq
+  # Note: this will not update jq if changed
   sudo_user: root
 - name: armv6l | install jq /2
   file: path=/usr/local/bin/jq owner=root group=root mode=0755
@@ -11,9 +13,16 @@
 - name: armv6l | create /etc/wpa_supplicant/
   file: path=/etc/wpa_supplicant/ state=directory
   sudo_user: root
+- name: armv6l | store old wpa_supplicant.conf md5
+  stat: path=/etc/wpa_supplicant/wpa_supplicant.conf
+  register: wpa_conf_old
 - name: armv6l | populate /etc/wpa_supplicant/wpa_supplicant.conf
   script: wpa_supplicant-conf.sh {{ home }} {{ config }}/config
   sudo_user: root
+- name: armv6l | get new wpa_supplicant.conf md5
+  stat: path=/etc/wpa_supplicant/wpa_supplicant.conf
+  register: wpa_conf_new
 - name: armv6l | ifdown/ifup wlan0
   shell: ifdown wlan0; sleep 1; ifup wlan0
   sudo_user: root
+  when: wpa_conf_old.stat.md5 is undefined or wpa_conf_old.stat.md5 != wpa_conf_new.stat.md5
