@@ -16,12 +16,14 @@
 - name: armv6l | store old wpa_supplicant.conf md5
   stat: path=/etc/wpa_supplicant/wpa_supplicant.conf
   register: wpa_conf_old
+  sudo_user: root
 - name: armv6l | populate /etc/wpa_supplicant/wpa_supplicant.conf
   script: wpa_supplicant-conf.sh {{ home }} {{ config }}/config
   sudo_user: root
 - name: armv6l | get new wpa_supplicant.conf md5
   stat: path=/etc/wpa_supplicant/wpa_supplicant.conf
   register: wpa_conf_new
+  sudo_user: root
 - name: armv6l | ifdown/ifup wlan0
   shell: ifdown wlan0; sleep 1; ifup wlan0
   sudo_user: root
