@@ -25,7 +25,7 @@
   pip: name=pip state=latest
   sudo: yes
 - name: install ansible
-  pip: name=ansible state=latest extra_args="--use-wheel --find-links={{ blobs }}/wheelhouse"
+  pip: name=ansible version=1.5 extra_args="--use-wheel --find-links={{ blobs }}/wheelhouse"
   sudo: yes
 
 - name: copy ansible inventory file
