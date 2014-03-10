@@ -109,6 +109,13 @@
 
 - include: drivers.yml
 
+- name: disable ntpd
+  command: insserv -r ntp
+  sudo_user: root
+- name: stop ntpd
+  service: name=ntp state=stopped
+  sudo_user: root
+
 # Install the smarthome-remote-key
 - name: check for the smarthome-remote-key
   stat: path={{ home }}/smarthome-remote-key
