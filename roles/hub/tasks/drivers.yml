@@ -1,4 +1,18 @@
 ---
+### BLE driver dependencies
+- name: ble_tag_monitor | apt install
+  apt: pkg={{ item }} update_cache=yes cache_valid_time=3600
+  with_items:
+    - libbluetooth3
+    - bluez # for hciconfig (also in blobs) TODO get rid of this
+    - python-bluez
+  sudo_user: root
+- name: install the lescan tool
+  copy: src=lescan.py dest=/usr/local/bin/lescan
+      owner=root group=root mode=0755
+  sudo_user: root
+# TODO: move the lescan.py to -drivers
+
 - name: mkdir ~/drivers_ENVs
   file: path={{ home }}/drivers_ENVs state=directory
 

@@ -48,6 +48,15 @@
       owner=root group=root mode=0755
   sudo_user: root
 
+- name: install usbreset /1
+  command: cp {{ blobs }}/usbreset-{{ ansible_machine }} /usr/local/bin/usbreset
+      creates=/usr/local/bin/usbreset
+  # Note: this will not update usbreset if changed
+  sudo_user: root
+- name: install usbreset /2
+  file: path=/usr/local/bin/usbreset owner=root group=root mode=0755
+  sudo_user: root
+
 - name: create and update the virtualenv
   pip: virtualenv={{ home }}/ENV/ name=pip state=latest
 - name: install requirements.txt
