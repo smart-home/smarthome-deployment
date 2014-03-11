@@ -32,12 +32,3 @@
   ignore_errors: True
 
 # TODO: delete the virtualenvs not in use
-
-### Open-zwave dependencies
-- name: install open-zwave packages
-  apt: pkg={{ item }} update_cache=yes cache_valid_time=3600
-  with_items:
-    - libudev-dev
-    - make
-    - build-essential
-  sudo_user: root
