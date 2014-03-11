@@ -1,6 +1,0 @@
-[local]
-localhost ansible_connection=local
-[raspberrypi]
-10.0.0.14
-
-
