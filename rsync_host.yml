@@ -1,0 +1,18 @@
+- hosts: rsync-host
+  tasks:
+    - debug: 'msg="WARNING: You will need ansible-playbook 1.5.2 at least for this"'
+
+    - name: mkdir
+      file: path={{ item }} state=directory mode=750
+      with_items:
+        - "{{ ansible_env.HOME }}/smarthome"
+        - "{{ ansible_env.HOME }}/smarthome/data"
+        - "{{ ansible_env.HOME }}/smarthome/logs"
+
+    - name: upload the ssh jail script
+      copy: src=rsync_host.py dest={{ ansible_env.HOME }}/rsync_host.py mode=750
+
+    - name: add smarthome-remote-key to authorized_key
+      authorized_key: user={{ ansible_user_id }}
+        key_options='command="/usr/bin/python {{ ansible_env.HOME }}/rsync_host.py"'
+        key="{{ lookup('file', 'keys/smarthome-remote-key.pub') }}"
