@@ -37,3 +37,4 @@ nosetests.xml
 
 /ec2.py
 /ec2.ini
+/inventory.ini
