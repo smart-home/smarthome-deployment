@@ -1,0 +1,2 @@
+- name: delete the old watchdog_path folder
+  file: path="{{ home }}/smarthome/watchdog/" state=absent

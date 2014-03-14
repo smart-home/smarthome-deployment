@@ -107,6 +107,9 @@
 #                    MISC                                              #
 ########################################################################
 
+# Run upgrade migrations tasks
+- include: upgrade.yml
+
 - include: drivers.yml
 
 - name: disable ntpd
@@ -114,6 +117,22 @@
   sudo_user: root
 - name: stop ntpd
   service: name=ntp state=stopped
+  sudo_user: root
+
+- name: disable rsyslogd
+  command: insserv -r rsyslog
+  sudo_user: root
+- name: stop rsyslogd
+  service: name=rsyslog state=stopped
+  sudo_user: root
+
+- name: setup and mount tmpfs
+  mount: name={{ home }}/smarthome src=tmpfs fstype=tmpfs
+      state=mounted
+  sudo_user: root
+
+- name: disable swap
+  command: dphys-swapfile uninstall
   sudo_user: root
 
 # Install the smarthome-remote-key
@@ -136,7 +155,7 @@
 # Create folders
 - name: extract the folders that have to be created
   shell: >
-      {{ app }}/config.py | jq --raw-output '[.logs_path+(.logging_modules|.[]), .logs_path+(.loaded_drivers|.[])+"-driver", .logs_path, .data_path, .watchdog_path]|.[]'
+      {{ app }}/config.py | jq --raw-output '[.logs_path+(.logging_modules|.[]), .logs_path+(.loaded_drivers|.[])+"-driver", .logs_path, .data_path]|.[]'
   register: folders
 - name: mkdir
   file: path={{ item }} state=directory
