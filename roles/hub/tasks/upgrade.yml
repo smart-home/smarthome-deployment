@@ -1,2 +1,8 @@
 - name: delete the old watchdog_path folder
-  file: path="{{ home }}/smarthome/watchdog/" state=absent
+  file: path="{{ home }}/smarthome/watchdog" state=absent
+
+- name: pull tmpfs from non-RPi hubs
+  mount: name={{ home }}/smarthome src=tmpfs fstype=tmpfs
+      state=absent
+  sudo_user: root
+  when: ansible_machine!="armv6l"

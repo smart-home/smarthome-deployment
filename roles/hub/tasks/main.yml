@@ -126,11 +126,6 @@
   service: name=rsyslog state=stopped
   sudo_user: root
 
-- name: setup and mount tmpfs
-  mount: name={{ home }}/smarthome src=tmpfs fstype=tmpfs
-      state=mounted
-  sudo_user: root
-
 - name: disable swap
   command: dphys-swapfile uninstall
   sudo_user: root
