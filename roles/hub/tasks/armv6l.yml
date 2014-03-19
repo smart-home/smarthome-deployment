@@ -29,7 +29,20 @@
   sudo_user: root
   when: wpa_conf_old.stat.md5 is undefined or wpa_conf_old.stat.md5 != wpa_conf_new.stat.md5
 
-################################ TMPFS ##################################
+############################# SETUP SNTP ################################
+- name: armv6l | disable ntpd
+  service: name=ntp state=stopped enabled=no
+  sudo_user: root
+
+- name: armv6l | install the sntp script
+  copy: src=sntp dest=/etc/init.d/sntp
+      owner=root group=root mode=0755
+  sudo_user: root
+- name: armv6l | enable sntp
+  service: name=sntp enabled=yes
+  sudo_user: root
+
+################################# MISC ##################################
 - name: armv6l | setup and mount tmpfs
   mount: name={{ home }}/smarthome src=tmpfs fstype=tmpfs
       state=mounted

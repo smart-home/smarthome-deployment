@@ -112,13 +112,6 @@
 
 - include: drivers.yml
 
-- name: disable ntpd
-  command: insserv -r ntp
-  sudo_user: root
-- name: stop ntpd
-  service: name=ntp state=stopped
-  sudo_user: root
-
 - name: disable rsyslogd
   command: insserv -r rsyslog
   sudo_user: root
