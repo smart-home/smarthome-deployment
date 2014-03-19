@@ -75,7 +75,7 @@
 
 
 ########################################################################
-#                    GENERATE/GET/INSTALL THE HUB-ID                   #
+#            GENERATE/GET/INSTALL THE HUB-ID AND THE CLASSES           #
 ########################################################################
 
 - name: generate hub unique UUID if not existing
@@ -101,6 +101,9 @@
 #   register: hub_id
 # - debug: >
 #     msg="hub-id: {{ hub_id.stdout }}"
+
+- name: install the hub classes
+  copy: content={{ hub_classes }} dest={{ home }}/.hub_classes
 
 
 ########################################################################
