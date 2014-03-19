@@ -47,3 +47,10 @@
   mount: name={{ home }}/smarthome src=tmpfs fstype=tmpfs
       state=mounted
   sudo_user: root
+
+- name: armv6l | remove swapfile
+  command: dphys-swapfile uninstall
+  sudo_user: root
+- name: armv6l | disable swap
+  service: name=dphys-swapfile enabled=no
+  sudo_user: root
