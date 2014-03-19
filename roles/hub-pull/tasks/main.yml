@@ -1,11 +1,13 @@
 # Happy reminder: THIS HAS TO BE BACKWARDS COMPATIBLE WITH ANSIBLE ALL THE WAY TO 1.5
 
-- name: install dependencies
-  apt: pkg={{ item }} state=installed update_cache=yes cache_valid_time=3600
-  sudo: yes
-  with_items:
-    - git
-    - python-pip
+## We assume that hub-pull will run on a already configured hub,
+## that will have recent versions of git and pip
+# - name: install dependencies
+#   apt: pkg={{ item }} state=installed update_cache=yes cache_valid_time=3600
+#   sudo: yes
+#   with_items:
+#     - git
+#     - python-pip
 
 - name: mkdir ~/.ssh
   file: path={{ home }}/.ssh state=directory
@@ -23,11 +25,9 @@
 
 - name: checkout the blobs repo
   git: dest={{ blobs }} repo=git@github.com:smart-home/smarthome-deployment-blobs.git depth=1
-- name: update pip
-  pip: name=pip state=latest
-  sudo: yes
 - name: install ansible
-  pip: name=ansible version=1.5.3 extra_args="--use-wheel --find-links={{ blobs }}/wheelhouse"
+  pip: name=ansible version=1.5.3
+      extra_args="--no-index --use-wheel --find-links={{ blobs }}/wheelhouse"
   sudo: yes
 
 - name: copy ansible inventory file

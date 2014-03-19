@@ -1,11 +1,16 @@
 ---
+
+- name: apt install
+  apt: pkg={{ item }} update_cache=yes cache_valid_time=3600
+  with_items:
+    - git
+    - uuid-runtime
+    - rsync
+  sudo_user: root
+
 ########################################################################
 #                    INSTALL GITHUB KEY AND CHECKOUT                   #
 ########################################################################
-
-- name: install git on the remote machine
-  apt: pkg=git update_cache=yes cache_valid_time=3600
-  sudo_user: root
 
 - name: mkdir ~/.ssh
   file: path={{ home }}/.ssh state=directory
@@ -35,12 +40,19 @@
 #                    DEPENDENCIES INSTALLATION                         #
 ########################################################################
 
-- name: apt install
-  apt: pkg={{ item }} update_cache=yes cache_valid_time=3600
-  with_items:
-    - python-virtualenv
-    - uuid-runtime
-    - rsync
+## (apt moved to the top)
+
+- name: get the pip installer
+  get_url: url=https://raw.github.com/pypa/pip/master/contrib/get-pip.py
+      dest={{ home }}/get-pip.py owner=root group=root mode=0755
+  sudo_user: root
+- name: install pip
+  command: python {{ home }}/get-pip.py
+      creates=/usr/local/bin/pip
+  sudo_user: root
+- name: install virtualenv
+  pip: name=virtualenv version=1.11.4
+      extra_args="--no-index --use-wheel --find-links={{ blobs }}/wheelhouse"
   sudo_user: root
 
 - name: install the google-dns tool
@@ -57,11 +69,9 @@
   file: path=/usr/local/bin/usbreset owner=root group=root mode=0755
   sudo_user: root
 
-- name: create and update the virtualenv
-  pip: virtualenv={{ home }}/ENV/ name=pip state=latest
-- name: install requirements.txt
+- name: create the virtualenv and install requirements.txt
   pip: virtualenv={{ home }}/ENV/ requirements={{ app }}/requirements.txt
-      extra_args="--use-wheel --find-links={{ blobs }}/wheelhouse"
+      extra_args="--no-index --use-wheel --find-links={{ blobs }}/wheelhouse"
 
 
 ########################################################################
@@ -94,7 +104,7 @@
 
 
 ########################################################################
-#                    ARCHITECTURE-DEPENDENT IMPORTS                    #
+#                                IMPORTS                               #
 ########################################################################
 
 - include: armv6l.yml
@@ -102,15 +112,15 @@
 - include: x86_64.yml
   when: ansible_machine=="x86_64"
 
-
-########################################################################
-#                    MISC                                              #
-########################################################################
-
 # Run upgrade migrations tasks
 - include: upgrade.yml
 
 - include: drivers.yml
+
+
+########################################################################
+#                                 MISC                                 #
+########################################################################
 
 - name: disable rsyslogd
   service: name=rsyslog state=stopped enabled=no

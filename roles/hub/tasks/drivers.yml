@@ -21,13 +21,10 @@
       {{ app }}/config.py | jq --raw-output '.loaded_drivers|.[]'
   register: driver_names
 
-- name: create and update the drivers virtualenvs
-  pip: virtualenv={{ home }}/drivers_ENVs/{{ item }} name=pip state=latest
-  with_items: driver_names.stdout_lines
-- name: install drivers requirements.txt
+- name: create the drivers virtualenvs and install drivers requirements.txt
   pip: virtualenv={{ home }}/drivers_ENVs/{{ item }}
       requirements={{ drivers }}/drivers/{{ item }}/requirements.txt
-      extra_args="--use-wheel --find-links={{ drivers }}/wheelhouse"
+      extra_args="--no-index --use-wheel --find-links={{ drivers }}/wheelhouse"
   with_items: driver_names.stdout_lines
   ignore_errors: True
 
