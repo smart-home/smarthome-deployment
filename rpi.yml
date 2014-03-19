@@ -9,6 +9,9 @@
         key="{{ lookup('file', 'keys/smarthome-services.pub') }}"
     - user: name=pi password=!
 
+    - name: install python-apt // workaround a bug in Ansible 1.5.3
+      shell: apt-get update && apt-get install -y python-apt
+
 - hosts: raspberrypi
   gather_facts: True
   remote_user: pi
