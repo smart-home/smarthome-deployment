@@ -1,3 +1,5 @@
+# Happy reminder: THIS HAS TO BE BACKWARDS COMPATIBLE WITH ANSIBLE ALL THE WAY TO 1.5
+
 - name: install dependencies
   apt: pkg={{ item }} state=installed update_cache=yes cache_valid_time=3600
   sudo: yes
