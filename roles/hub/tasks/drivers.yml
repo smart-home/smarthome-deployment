@@ -32,6 +32,3 @@
   ignore_errors: True
 
 # TODO: delete the virtualenvs not in use
-
-### Open-zwave dependencies
-
