@@ -10,3 +10,5 @@ deploy_repo: "git@github.com:smart-home/smarthome-deployment.git"
 deploy_rev: "master"
 blobs_repo: "git@github.com:smart-home/smarthome-deployment-blobs.git"
 blobs_rev: "master"
+
+pulling: False # Defaults to False, set to True by local.yml

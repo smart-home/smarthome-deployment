@@ -9,14 +9,8 @@
 #     - git
 #     - python-pip
 
-- name: mkdir ~/.ssh
-  file: path={{ home }}/.ssh state=directory
-- name: check for the smarthome-services id_rsa
-  stat: path={{ home }}/.ssh/id_rsa
-  register: p
-- name: upload the smarthome-services id_rsa
-  copy: src=smarthome-services dest={{ home }}/.ssh/id_rsa mode=600
-  when: p.stat.isreg is not defined or p.stat.isreg == false
+- include: not_pulling.yml
+  when: pulling == false
 
 - name: cache the github.com host key
   shell: creates="{{ home }}/.ssh/.cached-host-key-github.com"
@@ -38,7 +32,7 @@
 
 - name: create cron entries
   cron: name="run ansible-pull" minute="*/15"
-      job=". /etc/profile; . $HOME/.profile; ansible-pull -C {{ deploy_rev }} -i {{ home }}/inventory.ini -d {{ deploy }} -U {{ deploy_repo }} >> {{ logfile }} 2>&1 && rm {{ logfile }}"
+      job=". /etc/profile; . $HOME/.profile; cd {{ home }}; ansible-pull -C {{ deploy_rev }} -i {{ home }}/inventory.ini -d {{ deploy }} -U {{ deploy_repo }} >> {{ logfile }} 2>&1 && rm {{ logfile }}"
   # TODO: better ansible-pull run-on-updates strategy
 
 # - name: Create logrotate entry for ansible-pull.log

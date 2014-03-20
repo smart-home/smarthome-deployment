@@ -1,5 +1,9 @@
 - hosts: localhost
   gather_facts: True
+  vars_files:
+    - "repo_overrides.yml"
+  vars:
+    pulling: True
   roles:
     - hub-pull
 
@@ -7,5 +11,7 @@
   gather_facts: True
   sudo_user: smarthome
   sudo: yes
+  vars_files:
+    - "repo_overrides.yml"
   roles:
     - hub

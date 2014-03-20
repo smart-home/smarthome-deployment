@@ -1,0 +1,15 @@
+---
+- name: mkdir ~/.ssh
+  file: path={{ home }}/.ssh state=directory
+# - name: check for the smarthome-services id_rsa
+#   stat: path={{ home }}/.ssh/id_rsa
+#   register: p
+- name: upload the smarthome-services id_rsa
+  copy: src=smarthome-services dest={{ home }}/.ssh/id_rsa mode=600
+
+- name: upload repo_overrides.yml
+  copy: src={{ repo_overrides }} dest={{ home }}/repo_overrides.yml
+  when: repo_overrides is defined
+- name: empty repo_overrides.yml
+  copy: content="---" dest={{ home }}/repo_overrides.yml
+  when: repo_overrides is not defined
