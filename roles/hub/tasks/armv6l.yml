@@ -18,7 +18,7 @@
   register: wpa_conf_old
   sudo_user: root
 - name: armv6l | populate /etc/wpa_supplicant/wpa_supplicant.conf
-  script: wpa_supplicant-conf.sh {{ home }} {{ config }}/config
+  script: wpa_supplicant-conf.py {{ home }} {{ config }}/config
   sudo_user: root
 - name: armv6l | get new wpa_supplicant.conf md5
   stat: path=/etc/wpa_supplicant/wpa_supplicant.conf
