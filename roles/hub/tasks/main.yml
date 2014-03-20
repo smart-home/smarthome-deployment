@@ -102,8 +102,11 @@
 # - debug: >
 #     msg="hub-id: {{ hub_id.stdout }}"
 
+- name: ensure .hub-classes exists
+  file: path={{ home }}/.hub-classes state=touch
 - name: install the hub classes
-  copy: content={{ hub_classes }} dest={{ home }}/.hub_classes
+  copy: content={{ hub_classes }} dest={{ home }}/.hub-classes
+  when: hub_classes is defined
 
 
 ########################################################################

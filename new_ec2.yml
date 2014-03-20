@@ -44,7 +44,7 @@
     - user: name=admin password=!
 
     - name: install python-apt // workaround a bug in Ansible 1.5.3
-      shell: apt-get update && apt-get install -y python-apt
+      shell: dpkg -s python-apt || apt-get update && apt-get install -y python-apt
 
 - hosts: hub_ec2_hosts
   gather_facts: True
