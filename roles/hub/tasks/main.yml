@@ -27,13 +27,13 @@
       touch {{ home }}/.ssh/.cached-host-key-github.com
 
 - name: checkout the hub repo
-  git: dest={{ app }} repo=git@github.com:smart-home/smarthome-hub-sync.git depth=1 version={{ branch }}
+  git: dest={{ app }} repo={{ hub_repo }} depth=1 version={{ hub_rev }}
 - name: checkout the config repo
-  git: dest={{ config }} repo=git@github.com:smart-home/smart-home-config.git depth=1 version={{ branch }}
+  git: dest={{ config }} repo={{ config_repo }} depth=1 version={{ config_rev }}
 - name: checkout the blobs repo
-  git: dest={{ blobs }} repo=git@github.com:smart-home/smarthome-deployment-blobs.git depth=1 version={{ branch }}
+  git: dest={{ blobs }} repo={{ blobs_repo }} depth=1 version={{ blobs_rev }}
 - name: checkout the drivers repo
-  git: dest={{ drivers }} repo=git@github.com:smart-home/smarthome-drivers.git depth=1 version={{ branch }}
+  git: dest={{ drivers }} repo={{ drivers_repo }} depth=1 version={{ drivers_rev }}
 
 
 ########################################################################

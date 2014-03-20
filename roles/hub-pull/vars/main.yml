@@ -1,7 +1,12 @@
 ---
 home: "/home/{{ ansible_user_id }}"
-deploy_repo: "{{ home }}/smarthome-deployment"
-repo_url: "git@github.com:smart-home/smarthome-deployment.git"
-logfile: "{{ home }}/ansible-pull.log" # TODO
+
+deploy: "{{ home }}/smarthome-deployment"
 blobs: "{{ home }}/smarthome-deployment-blobs"
-branch: "master"
+
+logfile: "{{ home }}/ansible-pull.log" # TODO
+
+deploy_repo: "git@github.com:smart-home/smarthome-deployment.git"
+deploy_rev: "master"
+blobs_repo: "git@github.com:smart-home/smarthome-deployment-blobs.git"
+blobs_rev: "master"

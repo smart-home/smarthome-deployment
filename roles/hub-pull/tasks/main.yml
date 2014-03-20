@@ -24,7 +24,7 @@
       touch {{ home }}/.ssh/.cached-host-key-github.com
 
 - name: checkout the blobs repo
-  git: dest={{ blobs }} repo=git@github.com:smart-home/smarthome-deployment-blobs.git depth=1
+  git: dest={{ blobs }} repo={{ blobs_repo }} depth=1 version={{ blobs_rev }}
 - name: install ansible
   pip: name=ansible version=1.5.3
       extra_args="--no-index --use-wheel --find-links={{ blobs }}/wheelhouse"
@@ -34,11 +34,11 @@
   copy: src=local_inventory.ini dest={{ home }}/inventory.ini mode=0644
 
 - name: mkdir
-  file: path={{ deploy_repo }} state=directory
+  file: path={{ deploy }} state=directory
 
 - name: create cron entries
   cron: name="run ansible-pull" minute="*/15"
-      job=". /etc/profile; . $HOME/.profile; ansible-pull -C {{ branch }} -i {{ home }}/inventory.ini -d {{ deploy_repo }} -U {{ repo_url }} >> {{ logfile }} 2>&1 && rm {{ logfile }}"
+      job=". /etc/profile; . $HOME/.profile; ansible-pull -C {{ deploy_rev }} -i {{ home }}/inventory.ini -d {{ deploy }} -U {{ deploy_repo }} >> {{ logfile }} 2>&1 && rm {{ logfile }}"
   # TODO: better ansible-pull run-on-updates strategy
 
 # - name: Create logrotate entry for ansible-pull.log

@@ -1,11 +1,5 @@
----
-home: "/home/{{ ansible_user_id }}"
-
-app: "{{ home }}/smarthome-hub-sync"
-config: "{{ home }}/smart-home-config"
-blobs: "{{ home }}/smarthome-deployment-blobs"
-drivers: "{{ home }}/smarthome-drivers"
-
+deploy_repo: "git@github.com:smart-home/smarthome-deployment.git"
+deploy_rev: "master"
 hub_repo: "git@github.com:smart-home/smarthome-hub-sync.git"
 hub_rev: "master"
 config_repo: "git@github.com:smart-home/smart-home-config.git"

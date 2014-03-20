@@ -14,11 +14,15 @@
   remote_user: admin
   sudo_user: smarthome
   sudo: yes
+  vars_files:
+    - "{{ repo_overrides }}"
   roles:
     - hub
 
 - hosts: tag_smarthome_hub
   gather_facts: True
   remote_user: admin
+  vars_files:
+    - "{{ repo_overrides }}"
   roles:
     - hub-pull
