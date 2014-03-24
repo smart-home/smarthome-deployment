@@ -1,3 +1,5 @@
+# Requires Ansible >= 1.5.3 due to bug #6430
+
 - hosts: localhost
   gather_facts: True
   tasks:
@@ -6,6 +8,7 @@
 - hosts: localhost
   gather_facts: True
   vars_files:
+    # Workaround ansible bug #6651
     - ["NOT_EXISTING_HACK", "../repo_overrides.yml"]
   vars:
     pulling: True
@@ -17,6 +20,7 @@
   sudo_user: smarthome
   sudo: yes
   vars_files:
+    # Workaround ansible bug #6651
     - ["NOT_EXISTING_HACK", "../repo_overrides.yml"]
   roles:
     - hub
