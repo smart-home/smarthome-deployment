@@ -11,5 +11,5 @@
   copy: src={{ repo_overrides }} dest={{ home }}/repo_overrides.yml
   when: repo_overrides is defined
 - name: empty repo_overrides.yml
-  copy: content="---" dest={{ home }}/repo_overrides.yml
+  copy: 'content="EMPTY: --" dest={{ home }}/repo_overrides.yml'
   when: repo_overrides is not defined
