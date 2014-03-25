@@ -191,13 +191,13 @@ class LEScan():
         # print status
 
     def print_detect(self, bdaddr, rssi, re_type, name=None):
-        # msg = datetime.datetime.now().isoformat()
+        # msg = datetime.datetime.utcnow().isoformat()
         # msg += ' [%s] [%s] %s' % (bdaddr, rssi, re_type)
         # if name: msg += ' - %s' % name
         # print msg
 
         print json.dumps({
-            'timestamp': datetime.datetime.now().isoformat(),
+            'timestamp': datetime.datetime.utcnow().isoformat(),
             'bdaddr': bdaddr,
             'rssi': rssi,
             'type': re_type,
