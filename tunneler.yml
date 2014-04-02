@@ -1,0 +1,49 @@
+##########################
+# Usage:
+#
+# ansible-playbook -i ec2.py tunneler.yml --extra-vars "keypair_name=... security_group=... operation=new"
+# ---
+# ansible-playbook -i ec2.py tunneler.yml --extra-vars "operation=update"
+##########################
+
+- hosts: localhost
+  connection: local
+  gather_facts: False
+  vars:
+    instance_type: "t1.micro"
+    image: "ami-d3675dba" # Debian Wheezy 7.4 PVM x86_64
+    region: "us-east-1"
+    tag: "tunneler"
+  tasks:
+    - name: check for the operation
+      fail: msg="please specify a operation value of either `new` or `update`"
+      when: operation is not defined or (operation != 'new' and operation != 'update')
+
+    - include: new_ec2_instance.yml
+      when: operation == 'new'
+
+    - add_host: name="{{ item }}" groups=machines
+      with_items: groups["tag_smarthome_{{ tag }}"]
+      when: operation == 'update'
+
+- hosts: machines
+  gather_facts: False
+  remote_user: admin
+  sudo: yes
+  tasks:
+    - user: name=smarthome
+    - name: add smarthome-services to authorized_key
+      authorized_key: user=admin
+        key="{{ lookup('file', 'keys/smarthome-services.pub') }}"
+    - user: name=admin password=!
+
+    - name: install python-apt // workaround Ansible 1.5.3 bug #6530
+      shell: dpkg -s python-apt || apt-get update && apt-get install -y python-apt
+
+- hosts: machines
+  gather_facts: True
+  remote_user: admin
+  sudo_user: smarthome
+  sudo: yes
+  roles:
+    - tunneler

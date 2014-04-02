@@ -1,0 +1,57 @@
+---
+
+- name: apt install
+  apt: pkg={{ item }} update_cache=yes cache_valid_time=3600
+  with_items:
+    - git
+  sudo_user: root
+
+########################################################################
+#                    INSTALL GITHUB KEY AND CHECKOUT                   #
+########################################################################
+
+- name: mkdir ~/.ssh
+  file: path={{ home }}/.ssh state=directory
+- name: check for the smarthome-services id_rsa
+  stat: path={{ home }}/.ssh/id_rsa
+  register: p
+- name: upload the smarthome-services id_rsa
+  copy: src=smarthome-services dest={{ home }}/.ssh/id_rsa mode=600
+  when: p.stat.isreg is not defined or p.stat.isreg == false
+
+- name: cache the github.com host key
+  shell: creates="{{ home }}/.ssh/.cached-host-key-github.com"
+      ssh-keyscan -t ecdsa,rsa,dsa github.com >> ~/.ssh/known_hosts;
+      touch {{ home }}/.ssh/.cached-host-key-github.com
+
+- name: checkout the hub repo
+  git: dest={{ app }} repo={{ repo }} depth=1 version={{ rev }}
+
+########################################################################
+#                    DEPENDENCIES INSTALLATION                         #
+########################################################################
+
+- name: x86_64 | install jq
+  get_url: url=https://github.com/stedolan/jq/raw/gh-pages/download/linux64/jq
+      dest=/usr/local/bin/jq owner=root group=root mode=0755
+  sudo_user: root
+
+########################################################################
+#                       MAIN TUNNELER DEPENDENCIES                     #
+########################################################################
+
+- name: extract the folders that have to be created
+  shell: jq --raw-output '.ports_folder' {{ app }}/config.json
+  register: folders
+- name: mkdir
+  file: path={{ item }} state=directory
+  with_items: folders.stdout_lines
+
+- name: add the ssh key and command
+  authorized_key: user={{ ansible_user_id }}
+    key_options='command="{{ app }}/shell.py"'
+    key="{{ lookup('file', 'smarthome-services.pub') }}"
+
+- name: create cron entry
+  cron: name="run ports cleanup"
+      job=". /etc/profile; . $HOME/.profile; cd '{{ app }}'; '{{ app }}/cron.py'"

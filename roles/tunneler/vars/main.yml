@@ -1,0 +1,6 @@
+---
+home: "/home/{{ ansible_user_id }}"
+app: "{{ home }}/smarthome-reverse-tunneler"
+
+repo: "git@github.com:smart-home/smarthome-reverse-tunneler.git"
+rev: "master"
