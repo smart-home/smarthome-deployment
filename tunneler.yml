@@ -1,7 +1,7 @@
 ##########################
 # Usage:
 #
-# ansible-playbook -i ec2.py tunneler.yml --extra-vars "keypair_name=... security_group=... operation=new"
+# ansible-playbook -i inventory.ini tunneler.yml --extra-vars "keypair_name=... security_group=... operation=new"
 # ---
 # ansible-playbook -i ec2.py tunneler.yml --extra-vars "operation=update"
 ##########################
@@ -22,6 +22,7 @@
     - include: new_ec2_instance.yml
       when: operation == 'new'
 
+    # BUG: FAILING ON GROUP EMPTY - groups["tag_smarthome_{{ tag }}"] does not exist
     - add_host: name="{{ item }}" groups=machines
       with_items: groups["tag_smarthome_{{ tag }}"]
       when: operation == 'update'
