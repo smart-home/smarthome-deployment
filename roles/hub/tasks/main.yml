@@ -6,6 +6,7 @@
     - git
     - uuid-runtime
     - rsync
+    - daemontools # supervise
   sudo_user: root
 
 ########################################################################
@@ -34,6 +35,8 @@
   git: dest={{ blobs }} repo={{ blobs_repo }} depth=1 version={{ blobs_rev }}
 - name: checkout the drivers repo
   git: dest={{ drivers }} repo={{ drivers_repo }} depth=1 version={{ drivers_rev }}
+- name: checkout the tunneler repo
+  git: dest={{ tunneler }} repo={{ tunneler_repo }} depth=1 version={{ tunneler_rev }}
 
 
 ########################################################################
@@ -123,6 +126,26 @@
 
 - include: drivers.yml
 
+
+########################################################################
+#                               TUNNELER                               #
+########################################################################
+
+- name: extract tunneler host
+  shell: "{{ app }}/config.py | jq --raw-output .ssh_bridge_host"
+  register: ssh_bridge_host
+- name: cache the remote host key
+  shell: creates="{{ home }}/.ssh/.cached-host-key-{{ ssh_bridge_host.stdout.strip() }}"
+      ssh-keyscan -t ecdsa,rsa,dsa {{ ssh_bridge_host.stdout.strip() }} >> ~/.ssh/known_hosts;
+      touch {{ home }}/.ssh/.cached-host-key-{{ ssh_bridge_host.stdout.strip() }}
+
+- name: install the tunneler init script
+  template: src=tunneler dest=/etc/init.d/tunneler
+      owner=root group=root mode=0755
+  sudo_user: root
+- name: enable tunneler
+  service: name=tunneler enabled=yes
+  sudo_user: root
 
 ########################################################################
 #                                 MISC                                 #
