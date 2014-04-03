@@ -144,7 +144,7 @@
       owner=root group=root mode=0755
   sudo_user: root
 - name: enable tunneler
-  service: name=tunneler enabled=yes
+  service: name=tunneler enabled=yes state=started
   sudo_user: root
 
 ########################################################################
