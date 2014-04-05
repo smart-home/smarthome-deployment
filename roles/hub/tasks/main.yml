@@ -147,6 +147,9 @@
   service: name=tunneler enabled=yes state=started
   sudo_user: root
 
+- name: install the ssh config
+  copy: src=ssh_config dest={{ home }}/.ssh/config
+
 ########################################################################
 #                                 MISC                                 #
 ########################################################################
