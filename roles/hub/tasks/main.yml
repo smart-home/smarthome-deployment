@@ -184,6 +184,15 @@
   file: path={{ item }} state=directory
   with_items: folders.stdout_lines
 
+# Upload a script to ensure that the folders exist on boot
+- name: upload /etc/init.d/mkdirs
+  template: src=mkdirs dest=/etc/init.d/mkdirs
+      owner=root group=root mode=0755
+  sudo_user: root
+- name: enable /etc/init.d/mkdirs
+  service: name=mkdirs enabled=yes
+  sudo_user: root
+
 # Setup sudoers file
 - name: setup sudo
   template: src=sudoers dest=/etc/sudoers.d/smarthome validate='visudo -cf %s'
