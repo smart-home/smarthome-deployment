@@ -1,1 +1,1 @@
-{{ ansible_user_id }} ALL=(ALL) NOPASSWD: /sbin/shutdown, /sbin/ifup, /sbin/ifdown, /usr/local/bin/google-dns, /usr/local/bin/lescan, /usr/local/bin/usbreset, /usr/sbin/hciconfig
+{{ ansible_user_id }} ALL=(ALL) NOPASSWD: /sbin/shutdown, /sbin/ifup, /sbin/ifdown, /usr/local/bin/google-dns, /usr/local/bin/lescan, /usr/local/bin/usbreset, /usr/sbin/hciconfig, /usr/local/bin/MinOZW

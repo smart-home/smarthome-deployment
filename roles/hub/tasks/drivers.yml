@@ -1,5 +1,7 @@
 ---
-### BLE driver dependencies
+########################################################################
+#                                  BLE                                 #
+########################################################################
 - name: ble_tag_monitor | apt install
   apt: pkg={{ item }} update_cache=yes cache_valid_time=3600
   with_items:
@@ -11,8 +13,27 @@
   copy: src=lescan.py dest=/usr/local/bin/lescan
       owner=root group=root mode=0755
   sudo_user: root
-# TODO: move the lescan.py to -drivers
 
+########################################################################
+#                                 ZWAVE                                #
+########################################################################
+- name: install open-zwave/MinOZW
+  command: cp {{ blobs }}/open-zwave/MinOZW /usr/local/bin/MinOZW
+      creates=/usr/local/bin/MinOZW
+  # Note: this will not update MinOZW if changed
+  sudo_user: root
+- name: install open-zwave/config -> /etc/zwave/
+  command: cp -r {{ blobs }}/open-zwave/config /etc/zwave
+      creates=/etc/zwave
+  # Note: this will not update /etc/zwave/ if changed
+  sudo_user: root
+- name: mkdir /var/zwave/
+  file: path=/var/zwave/ state=directory
+  sudo_user: root
+
+########################################################################
+#                                GENERIC                               #
+########################################################################
 - name: mkdir ~/drivers_ENVs
   file: path={{ home }}/drivers_ENVs state=directory
 
