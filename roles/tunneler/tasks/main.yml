@@ -52,6 +52,18 @@
     key_options='command="{{ app }}/shell.py"'
     key="{{ lookup('file', 'smarthome-services.pub') }}"
 
+- name: workaround ansible/ansible#6881
+  lineinfile: dest=/etc/ssh/sshd_config line=" "
+  sudo_user: root
+- name: add ClientAliveInterval to sshd_config
+  lineinfile: dest=/etc/ssh/sshd_config regexp="^ClientAliveInterval "
+    line="ClientAliveInterval 15"
+  sudo_user: root
+- name: add ClientAliveCountMax to sshd_config
+  lineinfile: dest=/etc/ssh/sshd_config regexp="^ClientAliveCountMax "
+    line="ClientAliveCountMax 4"
+  sudo_user: root
+
 - name: create cron entry
   cron: name="run ports cleanup"
       job=". /etc/profile; . $HOME/.profile; cd '{{ app }}'; '{{ app }}/cron.py'"
