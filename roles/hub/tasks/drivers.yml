@@ -18,12 +18,12 @@
 #                                 ZWAVE                                #
 ########################################################################
 - name: install open-zwave/MinOZW
-  command: cp {{ blobs }}/open-zwave/MinOZW-v1.2 /usr/local/bin/MinOZW-v1.2
-      creates=/usr/local/bin/MinOZW-v1.2
+  command: cp {{ blobs }}/open-zwave/MinOZW-v1.3 /usr/local/bin/MinOZW-v1.3
+      creates=/usr/local/bin/MinOZW-v1.3
   sudo_user: root
 - name: update the link to MinOZW
   file: path=/usr/local/bin/MinOZW state=link
-      src=/usr/local/bin/MinOZW-v1.2
+      src=/usr/local/bin/MinOZW-v1.3
   sudo_user: root
 - name: install open-zwave/config -> /etc/zwave/
   command: cp -r {{ blobs }}/open-zwave/config /etc/zwave
