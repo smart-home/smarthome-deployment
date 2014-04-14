@@ -21,10 +21,16 @@
   command: cp {{ blobs }}/open-zwave/MinOZW-v1.3 /usr/local/bin/MinOZW-v1.3
       creates=/usr/local/bin/MinOZW-v1.3
   sudo_user: root
+  # register: minozw
+- name: remove the old MinOZW
+  file: path=/usr/local/bin/MinOZW state=absent
+  sudo_user: root
+  # when: minozw.changed
 - name: update the link to MinOZW
   file: path=/usr/local/bin/MinOZW state=link
       src=/usr/local/bin/MinOZW-v1.3
   sudo_user: root
+  # when: minozw.changed
 - name: install open-zwave/config -> /etc/zwave/
   command: cp -r {{ blobs }}/open-zwave/config /etc/zwave
       creates=/etc/zwave
