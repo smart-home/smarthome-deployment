@@ -32,7 +32,7 @@
 
 - name: create cron entries
   cron: name="run ansible-pull" minute="*/15"
-      job=". /etc/profile; . $HOME/.profile; cd {{ home }}; ansible-pull -C {{ deploy_rev }} -i {{ home }}/inventory.ini -d {{ deploy }} -U {{ deploy_repo }} >> {{ logfile }} 2>&1 && rm {{ logfile }}"
+      job=". /etc/profile; . $HOME/.profile; cd {{ home }}; ansible-pull -C {{ deploy_rev }} -i {{ home }}/inventory.ini -d {{ deploy }} -U {{ deploy_repo }} >> {{ logfile }} 2>&1 && rm {{ logfile }} || mv {{ logfile }} {{ synced_logfile }}"
   # TODO: better ansible-pull run-on-updates strategy
 
 # - name: Create logrotate entry for ansible-pull.log

@@ -5,6 +5,7 @@ deploy: "{{ home }}/smarthome-deployment"
 blobs: "{{ home }}/smarthome-deployment-blobs"
 
 logfile: "{{ home }}/ansible-pull.log" # TODO
+synced_logfile: "/home/smarthome/smarthome/logs/pull/ansible-pull.$(date --utc +%Y-%m-%d-%H-%M).log"
 
 deploy_repo: "git@github.com:smart-home/smarthome-deployment.git"
 deploy_rev: "master"
