@@ -11,7 +11,7 @@
 
 case $1 in
     start)
-        supervise {{ monitor }}/monitor_node &
+        sudo -u ubuntu supervise {{ monitor }}/monitor_node &
         ;;
     *)
         echo "Usage: $0 start"
