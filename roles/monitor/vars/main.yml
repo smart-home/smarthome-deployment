@@ -1,0 +1,22 @@
+---
+home: "/home/{{ ansible_user_id }}"
+
+hub: "{{ home }}/smarthome-hub-sync"
+config: "{{ home }}/smart-home-config"
+blobs: "{{ home }}/smarthome-deployment-blobs"
+drivers: "{{ home }}/smarthome-drivers"
+tunneler: "{{ home }}/smarthome-reverse-tunneler"
+monitor: "{{ home }}/smarthome-monitor"
+
+hub_repo: "git@github.com:smart-home/smarthome-hub-sync.git"
+hub_rev: "master"
+config_repo: "git@github.com:smart-home/smart-home-config.git"
+config_rev: "master"
+blobs_repo: "git@github.com:smart-home/smarthome-deployment-blobs.git"
+blobs_rev: "master"
+drivers_repo: "git@github.com:smart-home/smarthome-drivers.git"
+drivers_rev: "master"
+tunneler_repo: "git@github.com:smart-home/smarthome-reverse-tunneler.git"
+tunneler_rev: "master"
+monitor_repo: "git@github.com:smart-home/smarthome-monitor.git"
+monitor_rev: "master"

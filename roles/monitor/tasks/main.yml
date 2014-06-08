@@ -1,0 +1,83 @@
+---
+
+- name: apt install
+  apt: pkg={{ item }} update_cache=yes cache_valid_time=3600
+  with_items:
+    - git
+    - daemontools # supervise
+    - build-essential
+    - python-dev
+  sudo: yes
+
+########################################################################
+#                    INSTALL GITHUB KEY AND CHECKOUT                   #
+########################################################################
+
+- name: mkdir ~/.ssh
+  file: path={{ home }}/.ssh state=directory
+- name: upload the smarthome-services id_rsa
+  copy: src=keys/smarthome-services dest={{ home }}/.ssh/id_rsa mode=600
+
+- name: cache the github.com host key
+  shell: creates="{{ home }}/.ssh/.cached-host-key-github.com"
+      ssh-keyscan -t ecdsa,rsa,dsa github.com >> ~/.ssh/known_hosts;
+      touch {{ home }}/.ssh/.cached-host-key-github.com
+
+- name: checkout the hub repo
+  git: dest={{ hub }} repo={{ hub_repo }} depth=1 version={{ hub_rev }}
+- name: checkout the config repo
+  git: dest={{ config }} repo={{ config_repo }} depth=1 version={{ config_rev }}
+- name: checkout the blobs repo
+  git: dest={{ blobs }} repo={{ blobs_repo }} depth=1 version={{ blobs_rev }}
+- name: checkout the drivers repo
+  git: dest={{ drivers }} repo={{ drivers_repo }} depth=1 version={{ drivers_rev }}
+- name: checkout the tunneler repo
+  git: dest={{ tunneler }} repo={{ tunneler_repo }} depth=1 version={{ tunneler_rev }}
+- name: checkout the monitor repo
+  git: dest={{ monitor }} repo={{ monitor_repo }} depth=1 version={{ monitor_rev }}
+
+########################################################################
+#                    DEPENDENCIES INSTALLATION                         #
+########################################################################
+
+- name: x86_64 | install jq
+  get_url: url=https://github.com/stedolan/jq/raw/gh-pages/download/linux64/jq
+      dest=/usr/local/bin/jq owner=root group=root mode=0755
+  sudo: yes
+
+- name: get the pip installer
+  get_url: url=https://raw.github.com/pypa/pip/master/contrib/get-pip.py
+      dest={{ home }}/get-pip.py owner=root group=root mode=0755
+  sudo: yes
+- name: install pip
+  command: python {{ home }}/get-pip.py
+      creates=/usr/local/bin/pip
+  sudo: yes
+
+########################################################################
+#                        MAIN MONITOR DEPENDENCIES                     #
+########################################################################
+
+# TODO: virtualenv'ize this and wheels
+- name: install requirements.txt
+  pip: requirements={{ monitor }}/requirements_node.txt chdir={{ monitor }}
+  sudo: yes
+
+# Cache the remotehost SSH host key
+- name: extract remote host
+  shell: "{{ hub }}/config.py any | jq --raw-output .remotehost"
+  register: remotehost
+- name: cache the remote host key
+  shell: creates="{{ home }}/.ssh/.cached-host-key-{{ remotehost.stdout.strip() }}"
+      ssh-keyscan -t ecdsa,rsa,dsa {{ remotehost.stdout.strip() }} >> ~/.ssh/known_hosts;
+      touch {{ home }}/.ssh/.cached-host-key-{{ remotehost.stdout.strip() }}
+
+- name: install the monitor init script
+  template: src=monitor dest=/etc/init.d/monitor
+      owner=root group=root mode=0755
+  sudo: yes
+- name: enable monitor
+  service: name=monitor enabled=yes state=started
+  sudo: yes
+
+# TODO: redirect port 80
