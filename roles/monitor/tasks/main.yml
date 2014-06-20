@@ -58,6 +58,12 @@
 #                        MAIN MONITOR DEPENDENCIES                     #
 ########################################################################
 
+- name: install the git pull script
+  template: src=smarthome-git-pull dest=/usr/local/bin/smarthome-git-pull mode=0755
+  sudo: yes
+- name: create git pull cron entry
+  cron: name="git pull" minute="*/15" job="/usr/local/bin/smarthome-git-pull"
+
 # TODO: virtualenv'ize this and wheels
 - name: install requirements.txt
   pip: requirements={{ monitor }}/requirements_node.txt chdir={{ monitor }}

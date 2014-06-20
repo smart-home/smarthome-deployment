@@ -1,0 +1,20 @@
+#! /bin/bash
+
+git_pull() {
+    local folder="$1"
+
+    cd "$folder"
+    git pull
+}
+
+main() {
+    local folders=('{{ hub }}' '{{ config }}' '{{ blobs }}' '{{ drivers }}' '{{ tunneler }}')
+    local f
+
+    for f in "${folders[@]}"
+    do
+        git_pull "$f"
+    done
+}
+
+main
