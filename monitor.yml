@@ -22,4 +22,5 @@
   remote_user: ubuntu
   # TODO: segregate this into a different user
   roles:
+    - { role: unattended-upgrades, sudo: yes, email: bip@filippo.io }
     - monitor

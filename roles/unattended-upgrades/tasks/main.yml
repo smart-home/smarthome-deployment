@@ -1,0 +1,3 @@
+- copy: src=20auto-upgrades dest=/etc/apt/apt.conf.d/20auto-upgrades
+- template: src=50unattended-upgrades dest=/etc/apt/apt.conf.d/50unattended-upgrades
+- service: name=unattended-upgrades state=restarted
