@@ -7,6 +7,7 @@
     - daemontools # supervise
     - build-essential
     - python-dev
+    - iptables-persistent
   sudo: yes
 
 ########################################################################
@@ -86,4 +87,9 @@
   service: name=monitor enabled=yes state=started
   sudo: yes
 
-# TODO: redirect port 80
+- name: install iptables
+  file: src=rules.v4 dest=/etc/iptables/rules.v4
+  sudo: yes
+- name: load iptables
+  command: /etc/init.d/iptables-persistent reload
+  sudo: yes
