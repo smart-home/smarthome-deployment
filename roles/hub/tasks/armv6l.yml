@@ -43,10 +43,7 @@
   sudo_user: root
 
 ################################# MISC ##################################
-- name: armv6l | setup and mount tmpfs
-  mount: name={{ home }}/smarthome src=tmpfs fstype=tmpfs
-      state=mounted
-  sudo_user: root
+
 
 - name: armv6l | remove swapfile
   command: dphys-swapfile uninstall
