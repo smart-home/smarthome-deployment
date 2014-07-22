@@ -5,4 +5,4 @@ localhost ansible_connection=local
 192.168.1.42
 
 [rsync-host]
-power1.cs.virginia.edu ansible_ssh_user=sensordata
+power4.cs.virginia.edu ansible_ssh_user=sensordata
